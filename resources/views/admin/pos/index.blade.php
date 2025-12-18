@@ -593,7 +593,7 @@
                     html = '<div class="text-muted text-center py-5">No products found</div>';
                 } else {
                     filteredProducts.forEach(product => {
-                        const hasVariants = product.variants.length > 1;
+                        const hasVariants = product.variants.length > 0;
                         // const price = hasVariants ? '' : `Rs ${product.variants[0].selling_price}`;
                         const price = hasVariants ? '' : `Rs ${(product.variants[0]?.selling_price || 0)}`;
                         
