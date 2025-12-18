@@ -321,7 +321,7 @@
             </div>
             <div class="header-right">
                 <p class="person-label">Proprietor:</p>
-                <p class="person-name">Muhammad Iqbal</p>
+                <p class="person-name">Muhammad Asif</p>
                 <p class="compact">0333-2460463</p>
                 
                 <p class="person-label" style="margin-top: 8px;">Manager:</p>

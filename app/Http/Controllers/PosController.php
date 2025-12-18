@@ -21,23 +21,39 @@ class PosController extends Controller
     {
         $tenantId = auth()->user()->tenant_id;
 
+        $categories = Category::where('tenant_id', $tenantId)
+            ->withCount('products')
+            ->get();
+
+        $products = Product::where('tenant_id', $tenantId)
+            ->with(['variants' => function ($query) {
+                $query->orderBy('name');
+            }])
+            ->get();
+
+        $customers = Customer::where('tenant_id', $tenantId)
+            ->orderBy('name')
+            ->get();
+
+        $paymentMethods = PaymentMethod::where('tenant_id', $tenantId)
+            ->where('is_active', true)
+            ->get();
+
+        $currentBranch = Branch::where('tenant_id', $tenantId)
+            ->first();
+
+        // Check if we have at least the essential data
+        // if (!$currentBranch) {
+        //     return redirect()->back()->with('error', 'No branch found. Please contact administrator.');
+        // }
+
         return view('admin.pos.index', [
-            'categories' => Category::where('tenant_id', $tenantId)
-                ->withCount('products')
-                ->get(),
-            'products' => Product::where('tenant_id', $tenantId)
-                ->with(['variants' => function ($query) {
-                    $query->orderBy('name');
-                }])
-                ->get(),
-            'customers' => Customer::where('tenant_id', $tenantId)
-                ->orderBy('name')
-                ->get(),
-            'paymentMethods' => PaymentMethod::where('tenant_id', $tenantId)
-                ->where('is_active', true)
-                ->get(),
-            'currentBranch' => Branch::where('tenant_id', $tenantId)
-                ->firstOrFail()
+            'categories' => $categories,
+            'products' => $products,
+            'customers' => $customers,
+            'paymentMethods' => $paymentMethods,
+            'currentBranch' => $currentBranch,
+            'hasProducts' => $products->count() > 0 // Add this flag
         ]);
     }
 

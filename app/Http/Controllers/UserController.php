@@ -14,6 +14,9 @@ class UserController extends Controller
     public function index()
     {
         $users = User::orderBy('created_at', 'desc')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'super-admin');
+            })
             ->paginate(10);
 
         return view('admin.users.index', compact('users'));

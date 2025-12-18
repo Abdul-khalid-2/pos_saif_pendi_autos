@@ -48,11 +48,11 @@
                                 <i class="las la-minus"></i><span>POS Terminal</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('invoices.index') ? 'active' : '' }}">
+                        {{-- <li class="{{ request()->routeIs('invoices.index') ? 'active' : '' }}">
                             <a href="{{ route('invoices.index') }}">
                                 <i class="las la-minus"></i><span>Invoices</span>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 
@@ -115,16 +115,16 @@
                                 <i class="las la-minus"></i><span>Inventory Logs</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
+                        {{-- <li class="{{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
                             <a href="{{ route('stock-transfers.index') }}">
                                 <i class="las la-minus"></i><span>Stock Transfers</span>
                             </a>
-                        </li>
-                        <li class="{{ request()->routeIs('stock-adjustments.index') ? 'active' : '' }}">
+                        </li> --}}
+                        {{-- <li class="{{ request()->routeIs('stock-adjustments.index') ? 'active' : '' }}">
                             <a href="{{ route('stock-adjustments.index') }}">
                                 <i class="las la-minus"></i><span>Stock Adjustments</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="{{ request()->routeIs('low-stock-alerts') ? 'active' : '' }}">
                             <a href="{{ route('low-stock-alerts') }}">
                                 <i class="las la-minus"></i><span>Low Stock Alerts</span>
@@ -157,11 +157,11 @@
                                 <i class="las la-minus"></i><span>New Purchase</span>
                             </a>
                         </li>
-                        <li class="{{ request()->routeIs('purchase-returns.index') ? 'active' : '' }}">
+                        {{-- <li class="{{ request()->routeIs('purchase-returns.index') ? 'active' : '' }}">
                             <a href="{{ route('purchase-returns.index') }}">
                                 <i class="las la-minus"></i><span>Purchase Returns</span>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 
@@ -216,7 +216,7 @@
                         </svg>
                     </a>
                     <ul id="reports" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="{{ request()->routeIs('reports.sales') ? 'active' : '' }}">
+                        {{-- <li class="{{ request()->routeIs('reports.sales') ? 'active' : '' }}">
                             <a href="{{ route('reports.sales') }}">
                                 <i class="las la-minus"></i><span>Sales Reports</span>
                             </a>
@@ -225,7 +225,7 @@
                             <a href="{{ route('reports.inventory') }}">
                                 <i class="las la-minus"></i><span>Inventory Reports</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="{{ request()->routeIs('reports.profit-loss') ? 'active' : '' }}">
                             <a href="{{ route('reports.profit-loss') }}">
                                 <i class="las la-minus"></i><span>Profit & Loss</span>
@@ -241,7 +241,7 @@
 
 
                 <!-- Accounting -->
-                <li class="{{ request()->is('accounting*') || request()->is('transactions*') || request()->is('expenses*') ? 'active' : '' }}">
+                {{-- <li class="{{ request()->is('accounting*') || request()->is('transactions*') || request()->is('expenses*') ? 'active' : '' }}">
                     <a href="#accounting" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash-accounting" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -281,7 +281,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
                 @role('super-admin')
                     <li class="{{ request()->is('businesses*') || request()->is('categories*') || request()->is('brands*') ? 'active' : '' }}">
                         <a href="#business" class="collapsed" data-toggle="collapse" aria-expanded="false">

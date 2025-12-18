@@ -91,4 +91,78 @@ class InventoryLogController extends Controller
     {
         return response()->json($product->variants);
     }
+
+    // In InventoryLogController.php or create a new StockAlertController.php
+    public function lowStockAlerts()
+    {
+        $tenantId = auth()->user()->tenant_id;
+
+        // Get variants that are below reorder level
+        $lowStockVariants = ProductVariant::with(['product.category', 'product.supplier'])
+            ->whereHas('product', function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId)
+                    ->where('track_inventory', true);
+            })
+            ->whereColumn('current_stock', '<=', \DB::raw('products.reorder_level'))
+            ->join('products', 'product_variants.product_id', '=', 'products.id')
+            ->select('product_variants.*', 'products.reorder_level', 'products.name as product_name')
+            ->orderBy('current_stock')
+            ->paginate(20);
+
+        // Get out of stock items
+        $outOfStockVariants = ProductVariant::with(['product.category', 'product.supplier'])
+            ->whereHas('product', function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId)
+                    ->where('track_inventory', true);
+            })
+            ->where('current_stock', '<=', 0)
+            ->paginate(20);
+
+        // Get summary statistics
+        $summary = [
+            'total_low_stock' => ProductVariant::whereHas('product', function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId)
+                    ->where('track_inventory', true);
+            })
+                ->whereColumn('current_stock', '<=', \DB::raw('products.reorder_level'))
+                ->join('products', 'product_variants.product_id', '=', 'products.id')
+                ->count(),
+
+            'total_out_of_stock' => ProductVariant::whereHas('product', function ($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId)
+                    ->where('track_inventory', true);
+            })
+                ->where('current_stock', '<=', 0)
+                ->count(),
+
+            'total_products_tracking' => Product::where('tenant_id', $tenantId)
+                ->where('track_inventory', true)
+                ->count(),
+        ];
+
+        return view('admin.inventory.low-stock-alerts', compact(
+            'lowStockVariants',
+            'outOfStockVariants',
+            'summary'
+        ));
+    }
+
+    // Optional: Create a JSON API endpoint for dashboard widgets
+    public function lowStockCount()
+    {
+        $tenantId = auth()->user()->tenant_id;
+
+        $count = ProductVariant::whereHas('product', function ($query) use ($tenantId) {
+            $query->where('tenant_id', $tenantId)
+                ->where('track_inventory', true);
+        })
+            ->whereColumn('current_stock', '<=', \DB::raw('products.reorder_level'))
+            ->join('products', 'product_variants.product_id', '=', 'products.id')
+            ->count();
+
+        return response()->json([
+            'count' => $count,
+            'message' => $count . ' items need attention'
+        ]);
+    }
 }
