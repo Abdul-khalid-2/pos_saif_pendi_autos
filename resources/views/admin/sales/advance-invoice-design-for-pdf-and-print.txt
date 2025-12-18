@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #INV-2023-001</title>
+    <style>
+        @page {
+            margin: 0.8cm;
+            size: A4 portrait;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #1a202c;
+            line-height: 1.5;
+            font-size: 13px;
+            background: #ffffff;
+            padding: 10px;
+        }
+        
+        .invoice-container {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+            position: relative;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Header Styles */
+        .invoice-header {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+        }
+        
+        .header-left {
+            display: table-cell;
+            vertical-align: middle;
+            width: 70%;
+        }
+        
+        .invoice-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 5px;
+            margin-right: 15px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            float: left;
+        }
+        
+        .business-info {
+            overflow: hidden;
+        }
+        
+        .business-name {
+            margin: 0 0 5px 0;
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .business-tagline {
+            margin: 0 0 8px 0;
+            font-style: italic;
+            color: #e2e8f0;
+            font-size: 12px;
+        }
+        
+        .business-contact {
+            margin: 2px 0;
+            font-size: 11px;
+            color: #f7fafc;
+        }
+        
+        .header-right {
+            display: table-cell;
+            vertical-align: top;
+            text-align: right;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            width: 30%;
+        }
+        
+        .person-section {
+            margin-bottom: 10px;
+        }
+        
+        .person-label {
+            margin: 0 0 3px 0;
+            font-size: 10px;
+            color: #e2e8f0;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        
+        .person-name {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        .person-contact {
+            margin: 1px 0;
+            font-size: 10px;
+            color: #f7fafc;
+        }
+        
+        /* Invoice Title Section */
+        .invoice-title-section {
+            margin-bottom: 20px;
+            padding: 15px 0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .invoice-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+        
+        .invoice-meta {
+            display: table;
+            width: 100%;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .meta-left, .meta-right {
+            display: table-cell;
+            vertical-align: top;
+            width: 50%;
+        }
+        
+        .meta-item {
+            margin-bottom: 5px;
+        }
+        
+        .meta-label {
+            font-weight: 600;
+            color: #4a5568;
+            display: inline-block;
+            width: 70px;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        
+        .badge-success {
+            background: #48bb78;
+            color: #ffffff;
+        }
+        
+        .badge-danger {
+            background: #f56565;
+            color: #ffffff;
+        }
+        
+        .badge-warning {
+            background: #ed8936;
+            color: #ffffff;
+        }
+        
+        /* Customer Info Section */
+        .invoice-info {
+            margin-bottom: 20px;
+            display: table;
+            width: 100%;
+            border-spacing: 0 10px;
+        }
+        
+        .info-box {
+            display: table-cell;
+            vertical-align: top;
+            width: 48%;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .info-box:first-child {
+            margin-right: 4%;
+        }
+        
+        .info-header {
+            background: #4a5568;
+            color: white;
+            padding: 8px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        .info-content {
+            padding: 12px;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        
+        .info-content strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        /* Table Styles */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+        
+        .invoice-table th {
+            background: #667eea;
+            color: white;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        
+        .invoice-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .row-number {
+            background: #f8fafc;
+            color: #667eea;
+            font-weight: 600;
+            text-align: center;
+            width: 30px;
+        }
+        
+        /* Totals Section */
+        .invoice-totals {
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: 0;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11px;
+        }
+        
+        .invoice-totals tr {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .invoice-totals td {
+            padding: 8px 10px;
+        }
+        
+        .invoice-totals td:first-child {
+            font-weight: 600;
+            background: #f8fafc;
+            color: #4a5568;
+            border-right: 1px solid #e2e8f0;
+        }
+        
+        .invoice-totals td:last-child {
+            text-align: right;
+            font-weight: 500;
+            background: white;
+        }
+        
+        .total-row {
+            background: #667eea !important;
+            color: white !important;
+        }
+        
+        .total-row td {
+            background: transparent !important;
+            color: white !important;
+            font-weight: 700 !important;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            margin: 20px 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            padding-left: 10px;
+            border-left: 3px solid #667eea;
+        }
+        
+        /* Payment History Table */
+        .payment-table {
+            background: #f8fafc;
+        }
+        
+        /* Notes Section */
+        .notes-section {
+            background: #fffaf0;
+            border: 1px solid #fbd38d;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        
+        .notes-section h3 {
+            margin: 0 0 8px 0;
+            color: #c05621;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .notes-section p {
+            margin: 0;
+            color: #744210;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        
+        /* Footer Styles */
+        .invoice-footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .footer-content {
+            display: table;
+            width: 100%;
+        }
+        
+        .urdu-note {
+            font-family: 'DejaVu Sans', sans-serif;
+            direction: rtl;
+            margin: 0;
+            font-size: 12px;
+            color: #2d3748;
+            display: table-cell;
+            vertical-align: middle;
+            width: 70%;
+            font-weight: 500;
+            padding-right: 15px;
+        }
+        
+        .signature {
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+            width: 30%;
+        }
+        
+        .signature p {
+            margin: 0 0 10px 0;
+            font-size: 11px;
+            color: #4a5568;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #667eea;
+            width: 120px;
+            margin: 5px auto 0;
+        }
+        
+        .company-signature {
+            font-size: 12px;
+            font-weight: 700;
+            color: #667eea;
+            margin-top: 3px;
+        }
+        
+        /* Utility Classes */
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .fw-bold {
+            font-weight: 600;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .invoice-container {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            
+            .invoice-header,
+            .invoice-table th,
+            .badge-success,
+            .badge-danger,
+            .badge-warning,
+            .total-row {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .info-header {
+                background: #4a5568 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .invoice-table th {
+                background: #667eea !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header Section -->
+        <div class="invoice-header">
+            <div class="header-left">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZmIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJtb25vc3BhY2UiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjdlZWEiPkxPR088L3RleHQ+PC9zdmc+" alt="Logo" class="invoice-logo">
+                <div class="business-info">
+                    <h1 class="business-name">Business Name<sup>®</sup></h1>
+                    <p class="business-tagline">Premium Spare Parts Dealer</p>
+                    <p class="business-contact">📍 123 Business Address, City, Country</p>
+                    <p class="business-contact">✉️ email@example.com</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="person-section">
+                    <p class="person-label">Proprietor</p>
+                    <p class="person-name">Muhammad Iqbal</p>
+                    <p class="person-contact">📞 0333-2460463</p>
+                    <p class="person-contact">📞 0343-0211701</p>
+                </div>
+                
+                <div class="person-section">
+                    <p class="person-label">Manager</p>
+                    <p class="person-name">Muhammad Dawood Khan</p>
+                    <p class="person-contact">📞 0123-4567890</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice Title Section -->
+        <div class="invoice-title-section">
+            <h2 class="invoice-title">Invoice</h2>
+            <div class="invoice-meta">
+                <div class="meta-left">
+                    <div class="meta-item">
+                        <span class="meta-label">Invoice #:</span>
+                        <span class="fw-bold">INV-2023-001</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Date:</span>
+                        <span>Nov 15, 2023</span>
+                    </div>
+                </div>
+                <div class="meta-right">
+                    <div class="meta-item">
+                        <span class="meta-label">Status:</span>
+                        <span class="status-badge badge-success">Completed</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Payment:</span>
+                        <span class="status-badge badge-success">Paid</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Info Section -->
+        <div class="invoice-info">
+            <div class="info-box">
+                <div class="info-header">Bill To</div>
+                <div class="info-content">
+                    <strong>Customer:</strong> John Smith<br>
+                    📍 123 Customer Street, City<br>
+                    📞 555-1234<br>
+                    <strong>Tax ID:</strong> TAX-123456
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-header">Sold By</div>
+                <div class="info-content">
+                    <strong>Sales Person</strong><br>
+                    📍 Main Branch<br>
+                    123 Business Address, City
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 35%;">Product</th>
+                    <th style="width: 20%;">Variant</th>
+                    <th style="width: 10%;">Qty</th>
+                    <th style="width: 15%;">Unit Price</th>
+                    <th style="width: 15%;" class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="row-number">1</td>
+                    <td class="fw-bold">Product Name One</td>
+                    <td>Default</td>
+                    <td class="text-center">2</td>
+                    <td>150.00</td>
+                    <td class="text-right fw-bold">300.00</td>
+                </tr>
+                <tr>
+                    <td class="row-number">2</td>
+                    <td class="fw-bold">Product Name Two</td>
+                    <td>Red</td>
+                    <td class="text-center">1</td>
+                    <td>75.50</td>
+                    <td class="text-right fw-bold">75.50</td>
+                </tr>
+                <tr>
+                    <td class="row-number">3</td>
+                    <td class="fw-bold">Product Name Three</td>
+                    <td>Large</td>
+                    <td class="text-center">3</td>
+                    <td>42.00</td>
+                    <td class="text-right fw-bold">126.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Totals Section -->
+        <table class="invoice-totals">
+            <tr>
+                <td>Subtotal:</td>
+                <td class="text-right">501.50</td>
+            </tr>
+            <tr>
+                <td>Tax:</td>
+                <td class="text-right">50.15</td>
+            </tr>
+            <tr>
+                <td>Discount:</td>
+                <td class="text-right">-25.00</td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>Total Amount:</strong></td>
+                <td class="text-right"><strong>526.65</strong></td>
+            </tr>
+            <tr>
+                <td>Amount Paid:</td>
+                <td class="text-right">550.00</td>
+            </tr>
+            <tr>
+                <td>Change Due:</td>
+                <td class="text-right">23.35</td>
+            </tr>
+        </table>
+
+        <!-- Payment History -->
+        <h3 class="section-title">Payment History</h3>
+        <table class="invoice-table payment-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Date</th>
+                    <th style="width: 25%;">Method</th>
+                    <th style="width: 25%;">Amount</th>
+                    <th style="width: 25%;">Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Nov 15, 2023</td>
+                    <td>Credit Card</td>
+                    <td class="fw-bold">350.00</td>
+                    <td>REF-12345</td>
+                </tr>
+                <tr>
+                    <td>Nov 15, 2023</td>
+                    <td>Cash</td>
+                    <td class="fw-bold">200.00</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Notes -->
+        <div class="notes-section">
+            <h3>📝 Additional Notes</h3>
+            <p>Thank you for your business. Warranty valid for 30 days from purchase date.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <div class="footer-content">
+                <p class="urdu-note">
+                    Note: Purchased goods can be returned and exchanged, provided they are not damaged.
+                </p>
+                <div class="signature">
+                    <p class="fw-bold">Authorized Signature</p>
+                    <div class="signature-line"></div>
+                    <p class="company-signature">M.D. Autos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
