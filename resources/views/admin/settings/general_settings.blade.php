@@ -31,7 +31,7 @@
                                     <div class="form-group">
                                         <label>System Name</label>
                                         <input type="text" class="form-control" name="system_name" 
-                                               value="{{ old('system_name', $settings['system_name'] ?? 'MD-Autos') }}">
+                                               value="{{ old('system_name', $settings['system_name'] ?? 'PAK-PINDI') }}">
                                     </div>
                                     
                                     <div class="form-group">

@@ -1,5 +1,5 @@
 /*
-Template: MD-Autos - Responsive Bootstrap 4 Admin Dashboard Template
+Template: PAK-PINDI - Responsive Bootstrap 4 Admin Dashboard Template
 Author: iqonicthemes.in
 Design and Developed by: iqonicthemes.in
 NOTE: This file contains the styling for responsive Template.

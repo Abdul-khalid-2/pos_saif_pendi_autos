@@ -6,7 +6,7 @@
                 <a href="../backend/index.html" class="header-logo">
                     <img src=" {{ asset('backend/assets/images/MDLogo.jpg') }}" class="img-fluid rounded-normal"
                         alt="logo">
-                    <h5 class="logo-title ml-3">MD-Autos</h5>
+                    <h5 class="logo-title ml-3">PAK-PINDI</h5>
 
                 </a>
             </div>
