@@ -17,18 +17,21 @@
                         <img src="{{ public_path("backend/".$business->logo_path) }}" alt="Logo" style="width: 100px; height: auto; margin-right: 20px;">
                     @endif
                     <div style="font-family: Georgia, serif;">
-                        <h1 style="margin: 0; font-size: 28px; color: #2e3e5c;">{{ $business->name }}<sup>®</sup></h1>
-                        <p style="margin: 5px 0; font-style: italic; font-weight: bold; color: #9a5700;">Spare Parts Dealer</p>
+                        <!-- <h1 style="margin: 0; font-size: 28px; color: #2e3e5c;">{{ $business->name }}<sup>®</sup></h1> -->
+                        <h1 style="margin: 0; font-size: 28px; color: #2e3e5c;">NEW PAK PINDI AUTOS</h1>
+                        <p style="margin: 5px 0; font-style: italic; font-weight: bold; color: #9a5700;">IMPORTERS - WHOLESALERS <br>SPARE PARTS</p>
                         <p style="margin: 0; font-size: 12px; color: #444;">{{ $business->address }}</p>
                         <p style="margin: 0; font-size: 12px; color: #444;">Email: {{ $business->email }}</p>
                     </div>
                 </div>
-                <div class="invoice-address" style="text-align: left; color: #444;">
-                
-                    <p><strong style="margin: 0; font-size: 15px; color: #2e3e5c;">Proprietor:</strong> <br><span style="margin: 0; font-size: 13px; color: #ff8717;">Muhammad Iqbal</span></p>
-                    <p style="margin: 0; font-size: 12px; color: #2e3e5c;">0333-2460463</p>
-                    <p><strong style="margin: 0; font-size: 15px; color: #2e3e5c;">Manager:</strong> <br> <span style="margin: 0; font-size: 13px; color: #ff8717;">Muhammad Naeem Iqbal</span> </p>
-                    <p style="margin: 0; font-size: 12px; color: #2e3e5c;">{{ $business->phone }} <br> 0318-4905315</p>
+                <div class="invoice-address" style="text-align: left; color: #444;">                
+                    <p><strong style="margin: 0; font-size: 15px; color: #2e3e5c;">Proprietor:</strong> <span style="margin: 0; font-size: 13px; color: #ff8717;">Habib Ur Rehman</span></p>
+                    <p style="margin: 0; font-size: 12px; color: #2e3e5c;">0318-1068585</p>
+                    <p style="margin: 0; font-size: 12px; color: #2e3e5c;">0344-2070722</p>
+                    <p><strong style="margin: 0; font-size: 15px; color: #2e3e5c;">Manager:</strong>  <span style="margin: 0; font-size: 13px; color: #ff8717;">Saif Ur Rehman</span> </p>
+                    <p style="margin: 0; font-size: 12px; color: #2e3e5c;">
+                        {{-- {{ $business->phone }} <br>  --}}
+                        0315-1026553</p>
                 </div>
             </div>
         @endif
@@ -74,7 +77,7 @@
                     <div class="info-label">SOLD BY</div>
                     <div class="info-value">
                         {{ $sale->user->name }}<br>
-                        {{ $sale->branch->name }}<br>
+                        {{-- {{ $sale->branch->name }}<br> --}}
                         {{ $sale->branch->address }}
                     </div>
                 </div>

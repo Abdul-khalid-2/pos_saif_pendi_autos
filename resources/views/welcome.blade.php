@@ -13,13 +13,13 @@
         <!-- Content -->
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">Saif Pindi Autos</h1>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">New Pak PINDI AUTOS</h1>
                 <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-                    Your trusted supplier of genuine heavy vehicle parts and components
+                    IMPORTERS - WHOLESALERS SPARE PARTS
                 </p>
 
                 <!-- Buttons -->
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                {{-- <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="{{ route('our_products') }}"
                         class="px-8 py-3 bg-secondary-600 hover:bg-secondary-700 rounded-md text-white font-medium transition-slow">
                         Our Products
@@ -28,7 +28,7 @@
                         class="px-8 py-3 border-2 border-white hover:bg-white hover:text-gray-900 rounded-md text-white font-medium transition-slow">
                         Contact Us
                     </a>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
@@ -304,9 +304,8 @@
                             <div>
                                 <h4 class="font-bold mb-1">Address</h4>
                                 <p class="opacity-90">
-                                    # (Mehmood Terrace)<br>
-                                    Plot CS-55 Post Office Society,<br>
-                                    Super Market, Sohrab Goth, Karachi
+                                    LS-34 , Super Auto Market<br>
+                                    Sohrab Goth Karachi Pakistan<br>
                                 </p>
                             </div>
                         </div>
@@ -317,13 +316,13 @@
                                 <h4 class="font-bold mb-1">Phone</h4>
                                 <div class="space-y-2 opacity-90">
                                     <div>
-                                        <span class="font-semibold">Prop : Mohammad Iqbal Khan,</span><br>
-                                        <a href="tel:+923332460463" class="hover:text-primary-300 transition-colors">0333 2460463</a>
+                                        <span class="font-semibold">Prop : Habib Ur Rehman,</span><br>
+                                        <a href="tel:+923332460463" class="hover:text-primary-300 transition-colors">0318-1068585</a>
+                                        <a href="tel:+923332460463" class="hover:text-primary-300 transition-colors">0344-2070722</a>
                                     </div>
                                     <div>
-                                        <span class="font-semibold">Manager : Mohammad Naeem,</span><br>
-                                        <a href="tel:+923070005315" class="hover:text-primary-300 transition-colors">0307 0005315</a><br>
-                                        <a href="tel:+923184905315" class="hover:text-primary-300 transition-colors">0318 4905315</a>
+                                        <span class="font-semibold">Manager : Saif Ur Rehman,</span><br>
+                                        <a href="tel:+923070005315" class="hover:text-primary-300 transition-colors">0315-1026553</a><br>
                                     </div>
                                 </div>
                             </div>
@@ -334,8 +333,8 @@
                             <div>
                                 <h4 class="font-bold mb-1">Email</h4>
                                 <p class="opacity-90">
-                                    <a href="mailto:mdautos@trader.com" class="hover:text-primary-300 transition-colors">
-                                        mdautos@trader.com
+                                    <a href="mailto:pakpindiautos2020@gmail.com" class="hover:text-primary-300 transition-colors">
+                                        pakpindiautos2020@gmail.com
                                     </a>
                                 </p>
                             </div>

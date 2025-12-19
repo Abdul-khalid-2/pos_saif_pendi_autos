@@ -321,13 +321,14 @@
             </div>
             <div class="header-right">
                 <p class="person-label">Proprietor:</p>
-                <p class="person-name">Muhammad Asif</p>
-                <p class="compact">0333-2460463</p>
+                <p class="person-name">Habib Ur Rehman</p>
+                <p class="compact">0318-1068585</p>
+                <p class="compact">0344-2070722</p>
                 
                 <p class="person-label" style="margin-top: 8px;">Manager:</p>
-                <p class="person-name">Muhammad Naeem Iqbal</p>
-                <p class="compact">{{ $business->phone }}</p>
-                <p class="compact">0318-4905315</p>
+                <p class="person-name">Saif Ur Rehman</p>
+                {{-- <p class="compact">{{ $business->phone }}</p> --}}
+                <p class="compact">0315-1026553</p>
             </div>
         </div>
 
@@ -387,7 +388,7 @@
                 <div class="info-label">SOLD BY</div>
                 <div class="info-value">
                     <strong>{{ $sale->user->name }}</strong><br>
-                    {{ $sale->branch->name }}<br>
+                    {{-- {{ $sale->branch->name }}<br> --}}
                     {{ $sale->branch->address }}
                 </div>
             </div>

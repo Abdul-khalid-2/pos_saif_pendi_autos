@@ -4,7 +4,8 @@
                 <!-- Logo -->
                 <a href="{{ LaravelLocalization::getLocalizedURL(app()->getLocale(), route('home.index', [], false)) }}">
                     <div class="flex-shrink-0 flex items-center">
-                        <img class="h-6 w-auto" src="{{ asset('backend/assets/images/MDLogo.jpg') }}" alt="MD Autos Logo">&nbsp;&nbsp; <span class="text-2xl font-semibold text-sky-500"> MD-Autos</span>
+                        {{-- <img class="h-6 w-auto" src="{{ asset('backend/assets/images/MDLogo.jpg') }}" alt="MD Autos Logo">&nbsp;&nbsp;  --}}
+                        <span class="text-2xl font-semibold text-sky-500"> PAK PINDI</span>
                     </div>
                 </a>
 
@@ -83,7 +84,7 @@
                 <a href="{{ LaravelLocalization::getLocalizedURL(app()->getLocale(), route('home.index', [], false)) }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
                     {{ __('messages.home') }}
                 </a>
-                <a href="{{ LaravelLocalization::getLocalizedURL(app()->getLocale(), route('all.products', [], false)) }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
+                {{-- <a href="{{ LaravelLocalization::getLocalizedURL(app()->getLocale(), route('all.products', [], false)) }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
                     {{ __('messages.products') }}
                 </a>
                 <a href="{{ LaravelLocalization::getLocalizedURL(app()->getLocale(), route('about.us', [], false)) }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">
@@ -94,7 +95,7 @@
                 </a>
                 <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-secondary-600 hover:bg-secondary-700 transition-colors duration-300">
                     {{ __('messages.login') }}
-                </a>
+                </a> --}}
             </div>
         </div>
     </nav>

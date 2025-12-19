@@ -3,7 +3,7 @@
         <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-8 text-center sm:text-left">
             <!-- Company Info -->
             <div>
-                <h4 class="text-xl font-bold mb-4">MD AUTOS</h4>
+                <h4 class="text-xl font-bold mb-4">New Pak Pindi Autos</h4>
                 <p class="text-gray-400 mb-4">
                     Your trusted supplier of heavy vehicle parts and components
                 </p>
@@ -15,7 +15,7 @@
                     <!-- <a href="https://www.facebook.com/share/17MqeAsSeE/" class="text-gray-400 hover:text-white transition-slow">
                         <i class="fab fa-facebook-f text-xl"></i>
                     </a> -->
-                    <a href="#"
+                    <a href="https://api.whatsapp.com/send?phone=923312908362"
                         class="text-gray-400 hover:text-white transition-slow"
                         target="_blank"
                         rel="noopener noreferrer"

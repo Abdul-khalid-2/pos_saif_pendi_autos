@@ -212,9 +212,9 @@
                 <!-- Print/Download Options -->
                 <div class="card mt-4">
                     <div class="card-body text-center">
-                        <a href="{{ route('sales.invoice', $sale->id) }}" target="_blank" class="btn btn-outline-primary mr-2">
+                        <!-- <a href="{{ route('sales.invoice', $sale->id) }}" target="_blank" class="btn btn-outline-primary mr-2">
                             <i class="las la-print mr-2"></i>Print Invoice
-                        </a>
+                        </a> -->
                         <a href="{{ route('sales.invoice-pdf', $sale->id) }}" class="btn btn-outline-secondary">
                             <i class="las la-download mr-2"></i>Download PDF
                         </a>

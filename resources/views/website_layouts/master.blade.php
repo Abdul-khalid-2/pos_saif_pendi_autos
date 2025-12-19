@@ -621,7 +621,7 @@
    
     <!-- Mobile Bottom Navigation -->
     <div class="mobile-bottom-nav">
-        <a href="{{ route('home.index') }}" 
+        {{-- <a href="{{ route('home.index') }}" 
         class="mobile-nav-item {{ request()->routeIs('home.index') ? 'active' : '' }}">
             <i class="fas fa-home text-lg mb-1"></i>
             <span>Home</span>
@@ -635,7 +635,7 @@
         class="mobile-nav-item {{ request()->is('*/#contact') ? 'active' : '' }}">
             <i class="fas fa-phone text-lg mb-1"></i>
             <span>Contact</span>
-        </a>
+        </a> --}}
     </div>
 
     <!-- Footer -->
