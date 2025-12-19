@@ -16,6 +16,10 @@ class BackupController extends Controller
     public function databaseBackup()
     {
         $files = Storage::files('backup');
+        usort($files, function ($a, $b) {
+            return Storage::lastModified($b) - Storage::lastModified($a);
+        });
+
         return view('admin.settings.dabase_backup', compact('files'));
     }
 
