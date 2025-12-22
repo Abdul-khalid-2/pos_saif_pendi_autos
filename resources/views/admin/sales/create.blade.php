@@ -172,8 +172,14 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Reference</label>
-                                                <input type="text" name="payment_reference" class="form-control">
+                                                <label>Payment Reference / Location</label>
+                                                <div id="payment-reference-container">
+                                                    <input type="text" name="payment_reference" id="payment-reference-input" 
+                                                        class="form-control" placeholder="Loading...">
+                                                </div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle"></i> Optional: Specify location or reference for this payment
+                                                </small>
                                             </div>
                                         </div>
                                     </div>
@@ -417,12 +423,250 @@
         
         // Form submission handling
         $('#saleForm').on('submit', function(e) {
-            // If custom customer is being used and has a name
+            e.preventDefault();
+            
+            // Get the final payment reference value
+            let paymentReference = '';
+            
+            if ($('#payment-reference-select').length > 0) {
+                // Using dropdown
+                paymentReference = $('#payment-reference-select').val();
+                
+                // If "other" is selected, use custom input
+                if (paymentReference === 'other' && $('#custom-payment-reference-input').is(':visible')) {
+                    paymentReference = $('#custom-payment-reference-input').val();
+                }
+            } else {
+                // Using input field
+                paymentReference = $('#payment-reference-input').val();
+            }
+            
+            // Update the payment_reference input value
+            $('input[name="payment_reference"]').val(paymentReference);
+            
+            // Handle custom customer
             if ($('#customCustomerContainer').is(':visible') && $('#customCustomerName').val()) {
                 // Ensure customer_id is set to Walk-in-Customer
                 $('#customerSelect').val('Walk-in-Customer').prop('disabled', false);
             }
+            // Submit the form
+            this.submit();
         });
+    });
+
+
+    // Function to load customer references for payment
+    function loadCustomerReferences(customerId) {
+        // console.log('Loading references for customer:', customerId);
+        if (customerId === 'Walk-in-Customer' || !customerId) {
+            // Reset to input field for walk-in customers
+            resetPaymentReferenceField();
+            return;
+        }
+        
+        // Show loading in payment reference container
+        $('#payment-reference-container').html(`
+            <div class="input-group">
+                <select class="form-control" disabled>
+                    <option>Loading customer references...</option>
+                </select>
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </div>
+            </div>
+        `);
+        
+        // Make AJAX call to get customer references
+        $.ajax({
+            url: '/customer/' + customerId + '/references',
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // console.log('API Response:', response);                
+                if (response.references && response.references.length > 0) {
+                    // Customer has references, show dropdown
+                    $('#payment-reference-container').html(`
+                        <select name="payment_reference" id="payment-reference-select" class="form-control">
+                            <option value="">Select Location/Reference</option>
+                            <option value="other">Other (Manual Value)</option>
+                            ${response.references.map(ref => 
+                                `<option value="${ref}">${ref}</option>`
+                            ).join('')}
+                        </select>
+                        <input type="text" name="manual_reference" id="manual-reference-input" 
+                            class="form-control mt-2" 
+                            placeholder="Enter custom reference"
+                            style="display: none;">
+                    `);
+                    
+                    // Handle dropdown change
+                    $('#payment-reference-select').on('change', function() {
+                        if ($(this).val() === 'other') {
+                            $('#manual-reference-input').show().focus();
+                            // Clear any existing payment_reference hidden inputs
+                            $('input[name="payment_reference"][type="hidden"]').remove();
+                        } else {
+                            $('#manual-reference-input').hide();
+                            // Clear any existing payment_reference hidden inputs
+                            $('input[name="payment_reference"][type="hidden"]').remove();
+                            // Add hidden input with selected value
+                            const selectedValue = $(this).val();
+                            if (selectedValue) {
+                                $('#saleForm').append(`<input type="hidden" name="payment_reference" value="${selectedValue}">`);
+                            }
+                        }
+                    });
+                    
+                    // Update form data when manual input changes
+                    $('#manual-reference-input').on('input', function() {
+                        const manualValue = $(this).val();
+                        // Clear any existing payment_reference hidden inputs
+                        $('input[name="payment_reference"][type="hidden"]').remove();
+                        // Add hidden input with manual value if it exists
+                        if (manualValue) {
+                            $('#saleForm').append(`<input type="hidden" name="payment_reference" value="${manualValue}">`);
+                        }
+                    });
+                    
+                } else {
+                    // Customer has no references, show input field with message
+                    resetPaymentReferenceField();
+                    showNoPaymentReferencesMessage();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                // On error, show input field
+                resetPaymentReferenceField();
+                showPaymentReferenceErrorMessage();
+            }
+        });
+    }
+
+    // Reset payment reference field to input
+    function resetPaymentReferenceField() {
+        $('#payment-reference-container').html(`
+            <input type="text" name="payment_reference" id="payment-reference-input" 
+                class="form-control" placeholder="Enter payment reference (optional)">
+        `);
+        // Clear any hidden payment_reference inputs
+        $('input[name="payment_reference"][type="hidden"]').remove();
+    }
+
+    // Show message when customer has no references
+    function showNoPaymentReferencesMessage() {
+        const referenceField = $('#payment-reference-input');
+        referenceField.attr('placeholder', 'No saved references. Enter manually (optional)');
+        
+        // Add small info text
+        $('.text-muted').html(`
+            <i class="fas fa-info-circle"></i> 
+            <span class="text-info">This customer doesn't have saved references. You can add one above.</span>
+        `);
+    }
+
+    // Show error message
+    function showPaymentReferenceErrorMessage() {
+        $('.text-muted').html(`
+            <i class="fas fa-exclamation-triangle text-warning"></i> 
+            <span class="text-warning">Could not load references. Please enter manually.</span>
+        `);
+    }
+
+    // Handle customer selection change
+    $('#customerSelect').on('change', function() {
+        const customerId = $(this).val();
+        // console.log('Customer changed to:', customerId);
+        loadCustomerReferences(customerId);
+        
+        // Also handle custom customer toggle
+        if (customerId === 'Walk-in-Customer') {
+            $('#addCustomCustomer').html('<i class="las la-user-plus"></i> New Customer');
+            $('#customCustomerContainer').hide();
+            $('#customCustomerName').val('');
+            $('#customCustomerPhone').val('');
+            resetPaymentReferenceField();
+        }
+    });
+
+    // Handle custom customer toggle
+    $('#addCustomCustomer').click(function() {
+        $('#customCustomerContainer').toggle();
+        if ($('#customCustomerContainer').is(':visible')) {
+            $(this).html('<i class="las la-user-minus"></i> Cancel');
+            // Set to Walk-in Customer and reset reference field
+            $('#customerSelect').val('Walk-in-Customer').trigger('change');
+            resetPaymentReferenceField();
+        } else {
+            $(this).html('<i class="las la-user-plus"></i> New Customer');
+            $('#customCustomerName').val('');
+            $('#customCustomerPhone').val('');
+        }
+    });
+    // Initialize payment reference field on page load
+    $(document).ready(function() {
+        const initialCustomerId = $('#customerSelect').val();
+        console.log('Initial customer ID:', initialCustomerId);
+        loadCustomerReferences(initialCustomerId);
+    });
+
+    // Update form submission to handle payment reference
+    $(document).on('input', 'input[name="amount_paid"]', function() {
+        const amountPaid = parseFloat($(this).val()) || 0;
+        if (amountPaid > 0) {
+            // Show payment reference field importance
+            $('label[for="payment-reference-select"], label[for="payment-reference-input"]')
+                .html('Payment Reference / Location <span class="text-danger">*</span>');
+        } else {
+            $('label[for="payment-reference-select"], label[for="payment-reference-input"]')
+                .html('Payment Reference / Location');
+        }
+    });
+
+    // Handle form submission to ensure proper reference value
+    $('#saleForm').on('submit', function(e) {
+        console.log('Form submitting...');
+        
+        // Get the final payment reference value
+        let finalReference = '';
+        
+        // Check if we're using dropdown or input
+        if ($('#payment-reference-select').length > 0) {
+            // Using dropdown
+            const selectedValue = $('#payment-reference-select').val();
+            console.log('Dropdown selected:', selectedValue);
+            
+            if (selectedValue === 'other') {
+                finalReference = $('#manual-reference-input').val() || '';
+                console.log('Manual input value:', finalReference);
+            } else {
+                finalReference = selectedValue || '';
+            }
+            
+            // Remove any existing payment_reference inputs and add the correct one
+            $('input[name="payment_reference"]').remove();
+            if (finalReference) {
+                $(this).append(`<input type="hidden" name="payment_reference" value="${finalReference}">`);
+            }
+            
+        } else {
+            // Using simple input field
+            finalReference = $('#payment-reference-input').val() || '';
+            console.log('Input field value:', finalReference);
+        }
+        
+        console.log('Final reference to submit:', finalReference);
+        
+        // Handle custom customer
+        if ($('#customCustomerContainer').is(':visible') && $('#customCustomerName').val()) {
+            // Ensure customer_id is set to Walk-in-Customer
+            $('#customerSelect').val('Walk-in-Customer').prop('disabled', false);
+        }
+        
+        // Continue with form submission
+        console.log('Form submitted with reference:', finalReference);
     });
     </script>
     @endpush

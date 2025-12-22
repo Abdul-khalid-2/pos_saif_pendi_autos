@@ -162,4 +162,14 @@ class CustomerController extends Controller
         
         return $pdf->download('invoice-'.$customer->id.'-'.now()->format('Ymd').'.pdf');
     }
+
+    public function getReferences(Customer $customer)
+    {
+        $references = $customer->references ?? [];
+        
+        return response()->json([
+            'references' => $references,
+            'customer_name' => $customer->name
+        ]);
+    }
 }

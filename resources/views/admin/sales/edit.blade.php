@@ -162,9 +162,42 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Reference</label>
-                                                <input type="text" name="payment_reference" class="form-control"
-                                                    value="{{ $sale->payments->first() ? $sale->payments->first()->reference : '' }}">
+                                                <label>Payment Reference / Location</label>
+                                                <div id="payment-reference-container">
+                                                    <!-- Dynamic content will be loaded here -->
+                                                    @php
+                                                        $currentReference = $sale->payments->first() ? $sale->payments->first()->reference : '';
+                                                        $customerHasReferences = $sale->customer && !empty($sale->customer->references);
+                                                    @endphp
+                                                    
+                                                    @if($customerHasReferences)
+                                                        <!-- If customer has references, show dropdown -->
+                                                        <select name="payment_reference" id="payment-reference-select" class="form-control">
+                                                            <option value="">Select Location/Reference</option>
+                                                            <option value="other" {{ !in_array($currentReference, $sale->customer->references ?? []) && $currentReference ? 'selected' : '' }}>
+                                                                Other (Manual Value)
+                                                            </option>
+                                                            @foreach($sale->customer->references as $reference)
+                                                                <option value="{{ $reference }}" {{ $currentReference == $reference ? 'selected' : '' }}>
+                                                                    {{ $reference }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <input type="text" name="manual_reference" id="manual-reference-input" 
+                                                            class="form-control mt-2" 
+                                                            placeholder="Enter manual reference"
+                                                            value="{{ !in_array($currentReference, $sale->customer->references ?? []) && $currentReference ? $currentReference : '' }}"
+                                                            style="{{ in_array($currentReference, $sale->customer->references ?? []) || !$currentReference ? 'display: none;' : '' }}">
+                                                    @else
+                                                        <!-- If no references or walk-in customer, show simple input -->
+                                                        <input type="text" name="payment_reference" class="form-control"
+                                                            value="{{ $currentReference }}"
+                                                            placeholder="Enter reference or location (optional)">
+                                                    @endif
+                                                </div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle"></i> Optional: For location-based billing
+                                                </small>
                                             </div>
                                         </div>
                                     </div>
@@ -365,6 +398,246 @@
             $('#totalAmount').text(totalAmount.toFixed(2));
             $('#changeAmount').text(changeDue.toFixed(2));
         }
+    });
+
+
+    // Function to load customer references
+    function loadCustomerReferences(customerId) {
+        console.log('Loading references for customer:', customerId);
+        
+        if (!customerId || customerId === '') {
+            // For walk-in customers or no customer selected
+            resetToInputField();
+            return;
+        }
+        
+        // Get current reference value
+        const currentReference = $('input[name="payment_reference"]').val() || 
+                                $('#payment-reference-select').val() ||
+                                '{{ $sale->payments->first() ? $sale->payments->first()->reference : "" }}';
+        
+        console.log('Current reference:', currentReference);
+        
+        // Show loading state
+        $('#payment-reference-container').html(`
+            <div class="input-group">
+                <select class="form-control" disabled>
+                    <option>Loading references...</option>
+                </select>
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </div>
+            </div>
+        `);
+        
+        // Make AJAX call to get customer references
+        $.ajax({
+            url: '/customer/' + customerId + '/references',
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log('API Response:', response);
+                
+                if (response.references && response.references.length > 0) {
+                    // Customer has references, show dropdown
+                    let options = '<option value="">Select Location/Reference</option>';
+                    options += '<option value="other">Other (Manual Value)</option>';
+                    
+                    response.references.forEach(function(reference) {
+                        const selected = currentReference === reference ? 'selected' : '';
+                        options += `<option value="${reference}" ${selected}>${reference}</option>`;
+                    });
+                    
+                    $('#payment-reference-container').html(`
+                        <select name="payment_reference" id="payment-reference-select" class="form-control">
+                            ${options}
+                        </select>
+                        <input type="text" name="manual_reference" id="manual-reference-input" 
+                            class="form-control mt-2" 
+                            placeholder="Enter manual reference"
+                            style="display: none;">
+                    `);
+                    
+                    // Show manual input if current reference is not in list or is "other"
+                    if (currentReference && !response.references.includes(currentReference)) {
+                        $('#payment-reference-select').val('other');
+                        $('#manual-reference-input').show().val(currentReference);
+                    }
+                    
+                    // Handle dropdown change
+                    $('#payment-reference-select').on('change', function() {
+                        if ($(this).val() === 'other') {
+                            $('#manual-reference-input').show().focus();
+                            // Clear any previous payment_reference values
+                            $('input[name="payment_reference"]').remove();
+                            // Add a hidden input with the manual value
+                            const manualValue = $('#manual-reference-input').val();
+                            if (manualValue) {
+                                $('#saleForm').append(`<input type="hidden" name="payment_reference" value="${manualValue}">`);
+                            }
+                        } else {
+                            $('#manual-reference-input').hide();
+                            // Clear any previous payment_reference values
+                            $('input[name="payment_reference"]').remove();
+                            // Add a hidden input with the selected value
+                            $('#saleForm').append(`<input type="hidden" name="payment_reference" value="${$(this).val()}">`);
+                        }
+                    });
+                    
+                    // Update form data when manual input changes
+                    $('#manual-reference-input').on('input', function() {
+                        // Remove old payment_reference inputs
+                        $('input[name="payment_reference"]').remove();
+                        // Add new one with current value
+                        const value = $(this).val();
+                        if (value) {
+                            $('#saleForm').append(`<input type="hidden" name="payment_reference" value="${value}">`);
+                        }
+                    });
+                    
+                    // Trigger change event on page load if needed
+                    if ($('#payment-reference-select').val() === 'other') {
+                        $('#payment-reference-select').trigger('change');
+                    }
+                    
+                } else {
+                    // Customer has no references, show input field
+                    resetToInputField(currentReference);
+                    
+                    // Show info message
+                    showNoReferencesMessage();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                // On error, show input field
+                resetToInputField(currentReference);
+                showErrorMessage();
+            }
+        });
+    }
+
+    // Reset to simple input field
+    function resetToInputField(value = '') {
+        console.log('Resetting to input field with value:', value);
+        $('#payment-reference-container').html(`
+            <input type="text" name="payment_reference" class="form-control"
+                value="${value}"
+                placeholder="Enter reference or location (optional)">
+        `);
+        // Clear any old hidden inputs
+        $('input[name="payment_reference"][type="hidden"]').remove();
+        // Ensure the visible input is properly named
+        $('input[name="payment_reference"][type="text"]').attr('name', 'payment_reference');
+    }
+
+    // Show message when customer has no references
+    function showNoReferencesMessage() {
+        $('.text-muted').html(`
+            <i class="fas fa-info-circle text-info"></i> 
+            <span class="text-info">Customer has no saved references</span>
+        `);
+    }
+
+    // Show error message
+    function showErrorMessage() {
+        $('.text-muted').html(`
+            <i class="fas fa-exclamation-triangle text-warning"></i> 
+            <span class="text-warning">Failed to load references</span>
+        `);
+    }
+
+    // Handle customer selection change
+    $('select[name="customer_id"]').on('change', function() {
+        const customerId = $(this).val();
+        console.log('Customer changed to:', customerId);
+        loadCustomerReferences(customerId);
+    });
+
+    // Initialize on page load
+    $(document).ready(function() {
+        const customerId = $('select[name="customer_id"]').val();
+        console.log('Initial customer ID:', customerId);
+        loadCustomerReferences(customerId);
+        
+        // Handle form submission to ensure proper reference value
+        $('#saleForm').on('submit', function(e) {
+            console.log('Form submitting...');
+            
+            let finalReference = '';
+            
+            // Check if we're using dropdown or input
+            if ($('#payment-reference-select').length > 0) {
+                const selectedValue = $('#payment-reference-select').val();
+                console.log('Dropdown selected:', selectedValue);
+                
+                if (selectedValue === 'other') {
+                    finalReference = $('#manual-reference-input').val() || '';
+                } else {
+                    finalReference = selectedValue || '';
+                }
+                
+                // Remove any existing payment_reference inputs and add the correct one
+                $('input[name="payment_reference"]').remove();
+                if (finalReference) {
+                    $(this).append(`<input type="hidden" name="payment_reference" value="${finalReference}">`);
+                }
+                
+            } else {
+                // Using simple input field
+                finalReference = $('input[name="payment_reference"]').val() || '';
+                console.log('Input field value:', finalReference);
+            }
+            
+            console.log('Final reference to submit:', finalReference);
+            
+            // Continue with form submission (no need to prevent default)
+        });
+    });
+
+
+    // Initialize on page load
+    $(document).ready(function() {
+        const customerId = $('select[name="customer_id"]').val();
+        loadCustomerReferences(customerId);
+        
+        // Handle form submission to ensure proper reference value
+        $('#saleForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            let finalReference = '';
+            
+            // Check if we're using dropdown or input
+            if ($('#payment-reference-select').length > 0) {
+                const selectedValue = $('#payment-reference-select').val();
+                
+                if (selectedValue === 'other') {
+                    finalReference = $('#manual-reference-input').val() || '';
+                } else {
+                    finalReference = selectedValue || '';
+                }
+                
+                // Remove any existing payment_reference inputs and add the correct one
+                $('input[name="payment_reference"]').remove();
+                $(this).append(`<input type="hidden" name="payment_reference" value="${finalReference}">`);
+                
+            } else {
+                // Using simple input field
+                finalReference = $('input[name="payment_reference"]').val() || '';
+            }
+            
+            // Submit the form
+            this.submit();
+        });
+    });
+
+    // Handle manual reference input
+    $(document).on('input', '#manual-reference-input', function() {
+        // Update the actual payment_reference value
+        const value = $(this).val();
+        $('input[name="payment_reference"]').val(value);
     });
     </script>
     @endpush

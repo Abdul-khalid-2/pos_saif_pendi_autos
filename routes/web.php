@@ -213,6 +213,10 @@ Route::group([
         Route::get('/customers/{customer}/invoice', [CustomerController::class, 'invoice'])->name('customers.invoice');
         Route::get('/customers/{customer}/invoice/download', [CustomerController::class, 'downloadInvoice'])->name('customers.invoice.download');
 
+        Route::get('/customer/{customer}/references', [CustomerController::class, 'getReferences'])
+            ->name('customer.references');
+
+
         // Suppliers
         Route::resource('suppliers', SupplierController::class);
 
