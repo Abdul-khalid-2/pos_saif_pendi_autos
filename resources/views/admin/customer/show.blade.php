@@ -122,7 +122,27 @@
                                 </div>
                             </div>
                         </div>
-
+                        @if(!empty($customer->references))
+                            <div class="col-md-12 mt-3">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Customer References</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            @foreach($customer->references as $reference)
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="alert alert-light border d-flex align-items-center">
+                                                        <i class="fas fa-map-marker-alt text-primary mr-2"></i>
+                                                        <span>{{ $reference }}</span>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <div class="card">

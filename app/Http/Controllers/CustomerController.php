@@ -35,6 +35,9 @@ class CustomerController extends Controller
             'customer_group' => 'required|string|in:retail,wholesale,vip',
             'credit_limit' => 'nullable|numeric|min:0',
         ]);
+        if ($request->filled('references_json')) {
+            $validated['references'] = json_decode($request->references_json, true);
+        }
 
         $validated['tenant_id'] = auth()->user()->tenant_id;
         $validated['balance'] = 0;
@@ -79,6 +82,11 @@ class CustomerController extends Controller
             'balance_adjustment' => 'nullable|numeric|min:0',
             'balance_operation' => 'nullable|string|in:add,subtract,set',
         ]);
+        if ($request->filled('references_json')) {
+            $validated['references'] = json_decode($request->references_json, true);
+        } else {
+            $validated['references'] = [];
+        }
 
         // Handle balance adjustment if provided
         if ($request->filled('balance_adjustment') && $request->filled('balance_operation')) {
@@ -96,6 +104,7 @@ class CustomerController extends Controller
                     $customer->balance = $amount;
                     break;
             }
+            // $customer->save();
         }
 
         // Update all other fields

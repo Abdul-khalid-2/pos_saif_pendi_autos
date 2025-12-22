@@ -30,6 +30,51 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light">
+                                            <h5 class="mb-0">Customer References (Optional)</h5>
+                                            <p class="mb-0 text-muted" style="font-size: 12px;">Add delivery locations or reference points for billing</p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="alert alert-info mb-3">
+                                                <small><i class="fas fa-info-circle mr-2"></i> This is for customers who need separate billing for different locations/people. For direct customers, leave this empty.</small>
+                                            </div>
+                                            
+                                            <div id="reference-fields">
+                                                @if(!empty($customer->references))
+                                                    @foreach($customer->references as $reference)
+                                                        <div class="reference-item row mb-2">
+                                                            <div class="col-md-11">
+                                                                <input type="text" class="form-control reference-input" 
+                                                                    value="{{ $reference }}" 
+                                                                    placeholder="e.g., Karachi Office, Mr. Ali, Vehicle ABC-123">
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <button type="button" class="btn btn-sm btn-danger remove-reference">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                            
+                                            <div class="form-group mt-3">
+                                                <button type="button" class="btn btn-sm btn-primary" id="add-reference">
+                                                    <i class="fas fa-plus mr-1"></i> Add Reference
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-secondary" id="clear-references">
+                                                    <i class="fas fa-trash mr-1"></i> Clear All
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Hidden field to store JSON data -->
+                                            <input type="hidden" name="references_json" id="references_json" 
+                                                value="{{ !empty($customer->references) ? json_encode($customer->references) : '[]' }}">
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Name *</label>
@@ -151,6 +196,64 @@
                         adjustmentInput.val('');
                     }
                 });
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                // Template for new reference field
+                const referenceTemplate = `
+                    <div class="reference-item row mb-2">
+                        <div class="col-md-11">
+                            <input type="text" class="form-control reference-input" 
+                                placeholder="e.g., Karachi Office, Mr. Ali, Vehicle ABC-123">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-sm btn-danger remove-reference">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add reference field
+                $('#add-reference').click(function() {
+                    $('#reference-fields').append(referenceTemplate);
+                    updateReferencesJson();
+                });
+                
+                // Remove reference field
+                $(document).on('click', '.remove-reference', function() {
+                    $(this).closest('.reference-item').remove();
+                    updateReferencesJson();
+                });
+                
+                // Clear all references
+                $('#clear-references').click(function() {
+                    if (confirm('Are you sure you want to clear all references?')) {
+                        $('#reference-fields').empty();
+                        $('#references_json').val('[]');
+                    }
+                });
+                
+                // Update references on input change
+                $(document).on('input', '.reference-input', function() {
+                    updateReferencesJson();
+                });
+                
+                // Update the hidden JSON field
+                function updateReferencesJson() {
+                    const references = [];
+                    $('.reference-input').each(function() {
+                        const value = $(this).val().trim();
+                        if (value) {
+                            references.push(value);
+                        }
+                    });
+                    $('#references_json').val(JSON.stringify(references));
+                }
+                
+                // Initialize if there are existing references
+                updateReferencesJson();
             });
         </script>
     @endpush

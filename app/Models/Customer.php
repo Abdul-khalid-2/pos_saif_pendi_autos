@@ -20,9 +20,11 @@ class Customer extends Model
         'credit_limit',
         'balance',
         'customer_group',
+        'references'
     ];
 
     protected $casts = [
+        'references' => 'array',
         'credit_limit' => 'decimal:2',
         'balance' => 'decimal:2',
     ];
