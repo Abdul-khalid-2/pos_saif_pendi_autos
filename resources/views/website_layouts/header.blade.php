@@ -48,9 +48,18 @@
                         </div>
                     </div> --}}
                     
-                    <a href="{{ route('login') }}" class="ml-4 px-4 py-2 rounded-md bg-secondary-600 text-white font-medium hover:bg-secondary-700 transition-colors duration-300">
-                        {{ __('messages.login') }}
-                    </a>
+                     @auth
+                        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-300">
+                            {{ __('Dashboard') }}
+                        </a>
+                    @endauth
+
+                    @guest
+                        <a href="{{ route('login') }}" class="ml-4 px-4 py-2 rounded-md bg-secondary-600 text-white font-medium hover:bg-secondary-700 transition-colors duration-300">
+                            {{ __('Login') }}
+                        </a>
+                    @endguest
+                    
                 </div>
 
                 <!-- Mobile menu button -->
@@ -96,6 +105,16 @@
                 <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-secondary-600 hover:bg-secondary-700 transition-colors duration-300">
                     {{ __('messages.login') }}
                 </a> --}}
+                @auth
+                    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-300">
+                        {{ __('Dashboard') }}
+                    </a>
+                @endauth
+                @guest
+                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-secondary-600 hover:bg-secondary-700 transition-colors duration-300">
+                        {{ __('Login') }}
+                    </a> 
+                @endguest
             </div>
         </div>
     </nav>

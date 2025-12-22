@@ -37,21 +37,21 @@ class TenantDatabaseSeeder extends Seeder
         ]);
 
         $superadmin = User::create([
-            'name' => 'superadmin',
-            'email' => 'superadmin@gmail.com',
+            'name' => 'khalid Superadmin',
+            'email' => 'abdulkhalidmasood66@gmail.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('2k19khalidkhan'),
+            'password' => Hash::make('2k19khalidkhansuperadmin'),
             'remember_token' => null,
             'tenant_id' => $tenant->id,
         ]);
 
         $superadmin->assignRole('super-admin');
-        
+
         $admin = User::create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
+            'name' => 'Saif Ur Rahman',
+            'email' => 'pakpindiautos2020@gmail.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('admin'),
+            'password' => Hash::make('saifpakpindiautos123'),
             'remember_token' => null,
             'tenant_id' => $tenant->id,
         ]);

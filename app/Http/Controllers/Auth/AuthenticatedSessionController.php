@@ -41,33 +41,33 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
 
         // Check if user is admin and requires 2FA
-        if ($user->hasRole('admin')) {
-            // Generate OTP
-            // $otpCode = rand(100000, 999999); // 6-digit numeric code
-            $otpCode = '401924'; // 6-digit numeric code
-            $otpExpiresAt = Carbon::now()->addMinutes(10);
+        // if ($user->hasRole('admin')) {
+        //     // Generate OTP
+        //     // $otpCode = rand(100000, 999999); // 6-digit numeric code
+        //     $otpCode = '401924'; // 6-digit numeric code
+        //     $otpExpiresAt = Carbon::now()->addMinutes(10);
 
-            // Store OTP in database
-            $user->otp_code = $otpCode;
-            $user->otp_expires_at = $otpExpiresAt;
-            $user->save();
+        //     // Store OTP in database
+        //     $user->otp_code = $otpCode;
+        //     $user->otp_expires_at = $otpExpiresAt;
+        //     $user->save();
 
-            // Send OTP via email
-            Mail::to($user->email)->send(new TwoFactorAuthMail($otpCode));
+        //     // Send OTP via email
+        //     Mail::to($user->email)->send(new TwoFactorAuthMail($otpCode));
 
-            // Store user ID and remember flag in session
-            $request->session()->put('user_id', $user->id);
-            $request->session()->put('remember', $request->boolean('remember'));
+        //     // Store user ID and remember flag in session
+        //     $request->session()->put('user_id', $user->id);
+        //     $request->session()->put('remember', $request->boolean('remember'));
 
-            // Logout user until OTP is verified
-            Auth::logout();
+        //     // Logout user until OTP is verified
+        //     Auth::logout();
 
-            // Redirect to OTP verification page
-            return redirect()->route('2fa.show')->with(
-                '2fa_required',
-                'Please enter the OTP sent to your email to complete login.'
-            );
-        }
+        //     // Redirect to OTP verification page
+        //     return redirect()->route('2fa.show')->with(
+        //         '2fa_required',
+        //         'Please enter the OTP sent to your email to complete login.'
+        //     );
+        // }
 
         // For regular users, just log them in
         $request->session()->regenerate();
