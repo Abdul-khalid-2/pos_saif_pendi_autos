@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class CustomerController extends Controller
 {
@@ -171,5 +172,111 @@ class CustomerController extends Controller
             'references' => $references,
             'customer_name' => $customer->name
         ]);
+    }
+
+    public function referenceInvoice(Customer $customer, $reference = 'all')
+    {
+        // Get all sales for this customer
+        $query = Sale::where('customer_id', $customer->id)
+                    ->with(['items', 'payments']);
+        
+        // Filter by reference if not 'all'
+        if ($reference !== 'all') {
+            $query->whereHas('payments', function($q) use ($reference) {
+                $q->where('reference', $reference);
+            });
+        }
+        
+        $sales = $query->orderBy('created_at', 'desc')->get();
+
+        // Calculate totals
+        $totalSpent = $sales->sum('total_amount');
+        $totalPaid = $sales->sum('amount_paid');
+        $totalDues = $totalSpent - $totalPaid;
+        
+        // Calculate reference-specific totals if not 'all'
+        if ($reference !== 'all') {
+            $referenceSpent = $totalSpent;
+            $referencePaid = $sales->sum(function($sale) use ($reference) {  // Fixed: Added use($reference)
+                return $sale->payments->where('reference', $reference)->sum('amount');
+            });
+            $referenceDues = $referenceSpent - $referencePaid;
+        } else {
+            $referenceSpent = $totalSpent;
+            $referencePaid = $totalPaid;
+            $referenceDues = $totalDues;
+        }
+
+        $business = Business::first();
+
+        // Remove dd('testing') and return the view
+        return view('admin.customer.reference-invoice', compact(
+            'customer', 
+            'sales', 
+            'totalSpent', 
+            'totalPaid', 
+            'totalDues',
+            'business',
+            'reference',
+            'referenceSpent',
+            'referencePaid',
+            'referenceDues'
+        ));
+    }
+
+    public function downloadReferenceInvoice(Customer $customer, $reference = 'all')
+    {
+        // Get all sales for this customer
+        $query = Sale::where('customer_id', $customer->id)
+                    ->with(['items', 'payments']);
+        
+        // Filter by reference if not 'all'
+        if ($reference !== 'all') {
+            $query->whereHas('payments', function($q) use ($reference) {
+                $q->where('reference', $reference);
+            });
+        }
+        
+        $sales = $query->orderBy('created_at', 'desc')->get();
+
+        // Calculate totals
+        $totalSpent = $sales->sum('total_amount');
+        $totalPaid = $sales->sum('amount_paid');
+        $totalDues = $totalSpent - $totalPaid;
+        
+        // Calculate reference-specific totals if not 'all'
+        if ($reference !== 'all') {
+            $referenceSpent = $totalSpent;
+            $referencePaid = $sales->sum(function($sale) use ($reference) {
+                return $sale->payments->where('reference', $reference)->sum('amount');
+            });
+            $referenceDues = $referenceSpent - $referencePaid;
+        } else {
+            $referenceSpent = $totalSpent;
+            $referencePaid = $totalPaid;
+            $referenceDues = $totalDues;
+        }
+
+        $business = Business::first();
+
+        // Use the new PDF view for references
+        $pdf = PDF::loadView('admin.customer.reference-invoice-pdf', compact(
+            'customer', 
+            'sales', 
+            'totalSpent', 
+            'totalPaid', 
+            'totalDues',
+            'business',
+            'reference',
+            'referenceSpent',
+            'referencePaid',
+            'referenceDues'
+        ));
+        
+        $filename = $reference === 'all' 
+            ? 'invoice-' . $customer->id . '-' . now()->format('Ymd') . '.pdf'
+            : 'invoice-' . $customer->id . '-' . Str::slug($reference) . '-' . now()->format('Ymd') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }

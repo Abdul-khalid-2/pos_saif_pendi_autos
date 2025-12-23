@@ -210,6 +210,13 @@ Route::group([
 
         // Customers
         Route::resource('customers', CustomerController::class);
+        // Make reference routes completely different
+        Route::get('/customers/{customer}/reference-invoice/{reference}', [CustomerController::class, 'referenceInvoice'])
+            ->name('customers.reference.invoice');
+
+        Route::get('/customers/{customer}/reference-invoice/{reference}/download', [CustomerController::class, 'downloadReferenceInvoice'])
+            ->name('customers.reference.invoice.download');
+
         Route::get('/customers/{customer}/invoice', [CustomerController::class, 'invoice'])->name('customers.invoice');
         Route::get('/customers/{customer}/invoice/download', [CustomerController::class, 'downloadInvoice'])->name('customers.invoice.download');
 

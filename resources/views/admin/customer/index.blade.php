@@ -36,6 +36,7 @@
                                 <th>Group</th>
                                 <th>Credit Limit</th>
                                 <th>Balance</th>
+                                <th>References</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -64,6 +65,23 @@
                                 <td><span class="badge badge-{{ $customer->customer_group == 'retail' ? 'primary' : ($customer->customer_group == 'wholesale' ? 'success' : 'warning') }}">{{ ucfirst($customer->customer_group) }}</span></td>
                                 <td>Rs {{ number_format($customer->credit_limit, 2) }}</td>
                                 <td>Rs {{ number_format($customer->balance, 2) }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            {{ $customer->name }}
+                                            @if(!empty($customer->references))
+                                            <p class="mb-0">
+                                                <small class="text-success">
+                                                    <i class="fas fa-map-marker-alt"></i>
+                                                    {{ count($customer->references) }} reference(s)
+                                                </small>
+                                            </p>
+                                            @else
+                                            <p class="mb-0"><small>Since: {{ $customer->created_at->format('M d, Y') }}</small></p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
                                 <td>
                                     <div class="d-flex align-items-center list-action">
                                         <a class="badge badge-info mr-2" data-toggle="tooltip"

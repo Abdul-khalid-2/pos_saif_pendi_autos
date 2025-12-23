@@ -223,7 +223,8 @@
                     <button onclick="window.print()" class="btn btn-primary me-2">
                         <i class="fas fa-print me-2"></i>Print Invoice
                     </button>
-                    <a href="{{ route('customers.invoice.download', $customer->id) }}" class="btn btn-success">
+                    <a href="{{ route('customers.reference.invoice.download', ['customer' => $customer->id, 'reference' => $reference]) }}" 
+                    class="btn btn-success">
                         <i class="fas fa-file-pdf me-2"></i>Download PDF
                     </a>
                 </div>
@@ -233,9 +234,23 @@
 
     <div class="invoice-container">
         <div class="invoice-header">
-            <h1>NEW PAK PINDI AUTOS</h1>
-            <p>Summary of all transactions with {{ $customer->name }}</p>
+            @if($reference !== 'all')
+                <h1>NEW PAK PINDI AUTOS  </h1>
+                <h4>{{ strtoupper($reference) }}</h4>
+            @else
+                <h1>CUSTOMER STATEMENT</h1>
+                
+            @endif
+            <p>
+                @if($reference !== 'all')
+                    Summary of transactions for {{ $customer->name }} at {{ $reference }}
+                @else
+                    Summary of all transactions with {{ $customer->name }}
+                @endif
+            </p>
         </div>
+
+        
         
         <div class="invoice-body">
             <div class="row mb-4">
@@ -258,9 +273,21 @@
                 <div class="col-md-6">
                     <div class="customer-info">
                         <div class="info-title">
-                            <i class="fas fa-user me-2"></i>Customer Information
+                            <i class="fas fa-user me-2"></i>
+                            @if($reference !== 'all')
+                                Customer Information - {{ $reference }}
+                            @else
+                                Customer Information
+                            @endif
                         </div>
                         <div class="mb-2"><strong>{{ $customer->name }}</strong></div>
+                        @if($reference !== 'all')
+                        <div class="mb-2">
+                            <span class="badge bg-info">
+                                <i class="fas fa-map-marker-alt me-1"></i> {{ $reference }}
+                            </span>
+                        </div>
+                        @endif
                         <div class="mb-1">{{ $customer->address ?? 'No address provided' }}</div>
                         <div class="mb-1">
                             <i class="fas fa-phone me-2"></i>{{ $customer->phone }}
@@ -306,7 +333,12 @@
                 <div class="col-md-4">
                     <div class="card summary-card">
                         <div class="card-header">
-                            <i class="fas fa-chart-line me-2"></i>Purchase Summary
+                            <i class="fas fa-chart-line me-2"></i>
+                            @if($reference !== 'all')
+                                Location Purchase Summary
+                            @else
+                                Purchase Summary
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="summary-item">
@@ -315,11 +347,54 @@
                             </div>
                             <div class="summary-item">
                                 <span class="summary-label">Total Purchases:</span>
-                                <span class="summary-value">{{ number_format($totalSpent, 2) }}</span>
+                                <span class="summary-value">{{ number_format($referenceSpent, 2) }}</span>
                             </div>
                             <div class="summary-item">
                                 <span class="summary-label">Total Payments:</span>
-                                <span class="summary-value">{{ number_format($totalPaid, 2) }}</span>
+                                <span class="summary-value">{{ number_format($referencePaid, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card summary-card">
+                        <div class="card-header">
+                            <i class="fas fa-wallet me-2"></i>
+                            @if($reference !== 'all')
+                                Location Balance Summary
+                            @else
+                                Balance Summary
+                            @endif
+                        </div>
+                        <div class="card-body">
+                            <div class="summary-item">
+                                <span class="summary-label">Current Balance:</span>
+                                <span class="summary-value {{ $customer->balance >= 0 ? 'text-success' : 'text-danger' }}">
+                                    {{ number_format($customer->balance, 2) }}
+                                </span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">
+                                    @if($reference !== 'all')
+                                        {{ $reference }} Dues:
+                                    @else
+                                        Total Dues Balance:
+                                    @endif
+                                </span>
+                                <span class="summary-value {{ $referenceDues >= 0 ? 'text-danger' : 'text-success' }}">
+                                    {{ number_format($referenceDues, 2) }}
+                                </span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Last Order:</span>
+                                <span class="summary-value">
+                                    @if($sales->count() > 0)
+                                        {{ $sales->first()->created_at->format('M d, Y') }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -401,7 +476,11 @@
             <div class="notes-section">
                 <h5><i class="fas fa-info-circle me-2"></i>Important Notes</h5>
                 <ul class="mb-0">
-                    <li>This statement reflects all transactions with {{ $customer->name }} as of {{ now()->format('F j, Y') }}.</li>
+                    @if($reference !== 'all')
+                        <li>This statement reflects all transactions for {{ $customer->name }} at <strong>{{ $reference }}</strong> as of {{ now()->format('F j, Y') }}.</li>
+                    @else
+                        <li>This statement reflects all transactions with {{ $customer->name }} as of {{ now()->format('F j, Y') }}.</li>
+                    @endif
                     <li>Please make payments to clear outstanding balances by the due date.</li>
                     <li>For any discrepancies, please contact our accounts department within 7 days.</li>
                     <li>Late payments may be subject to interest charges as per our terms.</li>

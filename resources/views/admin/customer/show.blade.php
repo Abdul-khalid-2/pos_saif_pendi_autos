@@ -131,10 +131,18 @@
                                     <div class="card-body">
                                         <div class="row">
                                             @foreach($customer->references as $reference)
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="alert alert-light border d-flex align-items-center">
-                                                        <i class="fas fa-map-marker-alt text-primary mr-2"></i>
-                                                        <span>{{ $reference }}</span>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="alert alert-light border d-flex align-items-center justify-content-between">
+                                                        <div>
+                                                            <i class="fas fa-map-marker-alt text-primary mr-2"></i>
+                                                            <span>{{ $reference }}</span>
+                                                        </div>
+                                                        <div>
+                                                            <a href="{{ route('customers.reference.invoice', ['customer' => $customer->id, 'reference' => $reference]) }}" 
+                                                            class="btn btn-sm btn-info">
+                                                                <i class="fas fa-file-invoice"></i> Generate Invoice
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endforeach
