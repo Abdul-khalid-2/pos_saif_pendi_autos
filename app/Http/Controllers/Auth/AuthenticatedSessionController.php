@@ -73,6 +73,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Redirect regular users to home page
+        // return redirect()->intended(route('admin.dashboard', absolute: false));
         return redirect()->intended(route('admin.dashboard'));
     }
 
