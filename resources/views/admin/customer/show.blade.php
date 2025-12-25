@@ -131,17 +131,41 @@
                                     <div class="card-body">
                                         <div class="row">
                                             @foreach($customer->references as $reference)
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="alert alert-light border d-flex align-items-center justify-content-between">
-                                                        <div>
-                                                            <i class="fas fa-map-marker-alt text-primary mr-2"></i>
-                                                            <span>{{ $reference }}</span>
-                                                        </div>
-                                                        <div>
-                                                            <a href="{{ route('customers.reference.invoice', ['customer' => $customer->id, 'reference' => $reference]) }}" 
-                                                            class="btn btn-sm btn-info">
-                                                                <i class="fas fa-file-invoice"></i> Generate Invoice
-                                                            </a>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card border">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                                                <div>
+                                                                    <i class="fas fa-map-marker-alt text-primary mr-2"></i>
+                                                                    <span class="font-weight-bold">{{ $reference }}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Date Range Form for this reference -->
+                                                            <form action="{{ route('customers.reference.invoice', ['customer' => $customer->id, 'reference' => $reference]) }}"
+                                                                method="GET" class="reference-invoice-form" id="form-{{ $loop->index }}">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label class="small">Start Date</label>
+                                                                            <input type="date" name="start_date" class="form-control form-control-sm"
+                                                                                value="{{ date('Y-m-01') }}" max="{{ date('Y-m-d') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label class="small">End Date</label>
+                                                                            <input type="date" name="end_date" class="form-control form-control-sm"
+                                                                                value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 d-flex align-items-end">
+                                                                        <button type="submit" class="btn btn-sm btn-info btn-block">
+                                                                            <i class="fas fa-file-invoice"></i> Generate
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>

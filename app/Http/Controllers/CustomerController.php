@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class CustomerController extends Controller
@@ -128,9 +129,9 @@ class CustomerController extends Controller
     {
         // Get all sales for this customer
         $sales = Sale::where('customer_id', $customer->id)
-                    ->with(['items', 'payments'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+            ->with(['items', 'payments'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         // Calculate total spent
         $totalSpent = $sales->sum('total_amount');
@@ -143,7 +144,7 @@ class CustomerController extends Controller
 
         $business = Business::first();
 
-        return view('admin.customer.invoice', compact('customer', 'sales', 'totalSpent', 'totalPaid', 'totalDues','business'));
+        return view('admin.customer.invoice', compact('customer', 'sales', 'totalSpent', 'totalPaid', 'totalDues', 'business'));
     }
 
     public function downloadInvoice(Customer $customer)
@@ -159,7 +160,9 @@ class CustomerController extends Controller
         $totalPaid = $sales->sum('amount_paid');
         $totalDues = $totalSpent - $totalPaid;
 
-        $pdf = PDF::loadView('admin.customer.invoice-pdf', compact('customer', 'sales', 'totalSpent', 'totalPaid', 'totalDues'));
+        // Get business information
+        $business = Business::first();
+        $pdf = PDF::loadView('admin.customer.invoice-pdf', compact('customer',  'sales', 'totalSpent', 'totalPaid', 'totalDues', 'business'));
         
         return $pdf->download('invoice-'.$customer->id.'-'.now()->format('Ymd').'.pdf');
     }
@@ -174,15 +177,24 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function referenceInvoice(Customer $customer, $reference = 'all')
+    public function referenceInvoice(Customer $customer, $reference = 'all', Request $request)
     {
-        // Get all sales for this customer
+        // Get date range from request
+        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', now()->format('Y-m-d'));
+
+        // Convert dates to Carbon instances
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+
+        // Get all sales for this customer within date range
         $query = Sale::where('customer_id', $customer->id)
+                    ->whereBetween('sale_date', [$startDate, $endDate])
                     ->with(['items', 'payments']);
         
         // Filter by reference if not 'all'
         if ($reference !== 'all') {
-            $query->whereHas('payments', function($q) use ($reference) {
+            $query->whereHas('payments', function ($q) use ($reference) {
                 $q->where('reference', $reference);
             });
         }
@@ -197,10 +209,12 @@ class CustomerController extends Controller
         // Calculate reference-specific totals if not 'all'
         if ($reference !== 'all') {
             $referenceSpent = $totalSpent;
-            $referencePaid = $sales->sum(function($sale) use ($reference) {  // Fixed: Added use($reference)
-                return $sale->payments->where('reference', $reference)->sum('amount');
-            });
-            $referenceDues = $referenceSpent - $referencePaid;
+            $referencePaid = $totalPaid;
+            // $sales->sum(function($sale) use ($reference) {  // Fixed: Added use($reference)
+            //     return $sale->payments->where('reference', $reference)->sum('amount');
+            // });
+            // $referenceDues = $referenceSpent - $referencePaid;
+            $referenceDues = $referenceSpent - $totalPaid;
         } else {
             $referenceSpent = $totalSpent;
             $referencePaid = $totalPaid;
@@ -220,16 +234,27 @@ class CustomerController extends Controller
             'reference',
             'referenceSpent',
             'referencePaid',
-            'referenceDues'
+            'referenceDues',
+            'startDate',
+            'endDate'
         ));
     }
 
-    public function downloadReferenceInvoice(Customer $customer, $reference = 'all')
+    public function downloadReferenceInvoice(Customer $customer, $reference = 'all', Request $request)
     {
-        // Get all sales for this customer
+        // Get date range from request
+        $startDate = $request->get('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', now()->format('Y-m-d'));
+
+        // Convert dates to Carbon instances
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+
+        // Get all sales for this customer within date range
         $query = Sale::where('customer_id', $customer->id)
-                    ->with(['items', 'payments']);
-        
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->with(['items', 'payments']);
+
         // Filter by reference if not 'all'
         if ($reference !== 'all') {
             $query->whereHas('payments', function($q) use ($reference) {
@@ -247,10 +272,12 @@ class CustomerController extends Controller
         // Calculate reference-specific totals if not 'all'
         if ($reference !== 'all') {
             $referenceSpent = $totalSpent;
-            $referencePaid = $sales->sum(function($sale) use ($reference) {
-                return $sale->payments->where('reference', $reference)->sum('amount');
-            });
-            $referenceDues = $referenceSpent - $referencePaid;
+            $referencePaid = $totalPaid;
+            // $sales->sum(function($sale) use ($reference) {
+            //     return $sale->payments->where('reference', $reference)->sum('amount');
+            // });
+            // $referenceDues = $referenceSpent - $referencePaid;
+            $referenceDues = $referenceSpent - $totalPaid;
         } else {
             $referenceSpent = $totalSpent;
             $referencePaid = $totalPaid;
@@ -270,12 +297,16 @@ class CustomerController extends Controller
             'reference',
             'referenceSpent',
             'referencePaid',
-            'referenceDues'
+            'referenceDues',
+            'startDate',
+            'endDate'
         ));
-        
-        $filename = $reference === 'all' 
-            ? 'invoice-' . $customer->id . '-' . now()->format('Ymd') . '.pdf'
-            : 'invoice-' . $customer->id . '-' . Str::slug($reference) . '-' . now()->format('Ymd') . '.pdf';
+
+        // Create filename with dates
+        $dateSuffix = $startDate->format('Ymd') . '-' . $endDate->format('Ymd');
+        $filename = $reference === 'all'
+            ? 'invoice-' . $customer->id . '-' . $dateSuffix . '.pdf'
+            : 'invoice-' . $customer->id . '-' . Str::slug($reference) . '-' . $dateSuffix . '.pdf';
         
         return $pdf->download($filename);
     }
