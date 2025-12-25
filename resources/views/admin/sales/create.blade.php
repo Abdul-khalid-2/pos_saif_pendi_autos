@@ -42,7 +42,7 @@
                                     <div class="form-group">
                                         <label>Invoice Number *</label>
                                         <input type="text" name="invoice_number" class="form-control"
-                                            value="MD-{{ \Carbon\Carbon::now()->format('Ymd-his') }}" required readonly>
+                                            value="PP{{ \Carbon\Carbon::now()->format('Ymd-his') }}" required readonly>
                                     </div>
                                 </div>
 

@@ -22,7 +22,7 @@
                     <div class="card-body">
                         <form id="posForm" method="POST">
                             @csrf
-                            <input type="hidden" name="invoice_number" value="MD-{{ \Carbon\Carbon::now()->format('Ymd-his') }}">
+                            <input type="hidden" name="invoice_number" value="PP{{ \Carbon\Carbon::now()->format('Ymd-his') }}">
                             <input type="hidden" name="sale_date" value="{{ date('Y-m-d') }}">
                             <input type="hidden" name="branch_id" value="{{ $currentBranch->id ?? '' }}">
                             
@@ -401,7 +401,7 @@
                     
                     this.updateUI();
                 },
-                         updateChangeDue: function() {
+                updateChangeDue: function() {
                     const total = parseFloat($('#cartTotal').text().replace('Rs ', '')) || 0;
                     const amountPaid = parseFloat($('#amountPaid').val()) || 0;
                     const changeDue = Math.max(0, amountPaid - total);                    
@@ -914,7 +914,7 @@
                                 $('#amountPaid').val('0');
                                 $('#cartDiscount').val('0');
                                 
-                                const newInvoiceNumber = 'MD-' + new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -5);
+                                const newInvoiceNumber = 'PP' + new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -5);
                                 $('input[name="invoice_number"]').val(newInvoiceNumber);
 
                                 $('#customerSelect').val('Walk-in-Customer').trigger('change');

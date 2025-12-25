@@ -446,7 +446,7 @@ class OrderController extends Controller
     {
         try {
             // Generate invoice number
-            $invoiceNumber = 'MD-' . \Carbon\Carbon::now()->format('Ymd-his');
+            $invoiceNumber = 'PP' . \Carbon\Carbon::now()->format('Ymd-his');
 
             // Create sale
             $sale = Sale::create([

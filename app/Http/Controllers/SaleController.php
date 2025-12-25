@@ -158,7 +158,10 @@ class SaleController extends Controller
         }
 
         // Record payment if any amount was paid
-        if ($request->amount_paid > 0) {
+        if($request->amount_paid == null){
+            $request->amount_paid = 0;
+        }
+        if ($request->amount_paid >= 0) {
             SalePayment::create([
                 'tenant_id' => auth()->user()->tenant_id,
                 'sale_id' => $sale->id,
