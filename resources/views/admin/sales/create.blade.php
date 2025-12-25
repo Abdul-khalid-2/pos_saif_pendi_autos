@@ -260,23 +260,35 @@
         
         // Toggle custom customer fields
         $('#addCustomCustomer').click(function() {
-            $('#customCustomerContainer').toggle();
-            if ($('#customCustomerContainer').is(':visible')) {
-                $(this).html('<i class="las la-user-minus"></i> Cancel');
-                // Set to Walk-in Customer when showing custom fields
-                $('#customerSelect').val('Walk-in-Customer').trigger('change');
-            } else {
-                $(this).html('<i class="las la-user-plus"></i> New Customer');
+            const container = $('#customCustomerContainer');
+            const button = $(this);
+            
+            if (container.is(':visible')) {
+                // Hide custom fields
+                container.slideUp(300);
+                button.html('<i class="las la-user-plus"></i> New Customer');
+                button.removeClass('btn-outline-danger').addClass('btn-outline-secondary');
                 $('#customCustomerName').val('');
                 $('#customCustomerPhone').val('');
+            } else {
+                container.slideDown(300);
+                button.html('<i class="las la-user-minus"></i> Cancel');
+                button.removeClass('btn-outline-secondary').addClass('btn-outline-danger');
+                
+                $('#customerSelect').val('Walk-in-Customer').trigger('change');
+                
+                setTimeout(() => {
+                    $('#customCustomerName').focus();
+                }, 350);
             }
         });
         
         // When customer is selected, hide custom fields
         $('#customerSelect').on('change', function() {
             if ($(this).val() !== 'Walk-in-Customer') {
-                $('#customCustomerContainer').hide();
+                $('#customCustomerContainer').slideUp(300);
                 $('#addCustomCustomer').html('<i class="las la-user-plus"></i> New Customer');
+                $('#addCustomCustomer').removeClass('btn-outline-danger').addClass('btn-outline-secondary');
                 $('#customCustomerName').val('');
                 $('#customCustomerPhone').val('');
             }
@@ -421,39 +433,9 @@
             $('#changeAmount').text(changeDue.toFixed(2));
         }
         
-        // Form submission handling
-        $('#saleForm').on('submit', function(e) {
-            e.preventDefault();
-            
-            // Get the final payment reference value
-            let paymentReference = '';
-            
-            if ($('#payment-reference-select').length > 0) {
-                // Using dropdown
-                paymentReference = $('#payment-reference-select').val();
-                
-                // If "other" is selected, use custom input
-                if (paymentReference === 'other' && $('#custom-payment-reference-input').is(':visible')) {
-                    paymentReference = $('#custom-payment-reference-input').val();
-                }
-            } else {
-                // Using input field
-                paymentReference = $('#payment-reference-input').val();
-            }
-            
-            // Update the payment_reference input value
-            $('input[name="payment_reference"]').val(paymentReference);
-            
-            // Handle custom customer
-            if ($('#customCustomerContainer').is(':visible') && $('#customCustomerName').val()) {
-                // Ensure customer_id is set to Walk-in-Customer
-                $('#customerSelect').val('Walk-in-Customer').prop('disabled', false);
-            }
-            // Submit the form
-            this.submit();
-        });
+        const initialCustomerId = $('#customerSelect').val();
+        loadCustomerReferences(initialCustomerId);
     });
-
 
     // Function to load customer references for payment
     function loadCustomerReferences(customerId) {
@@ -580,49 +562,6 @@
         const customerId = $(this).val();
         // console.log('Customer changed to:', customerId);
         loadCustomerReferences(customerId);
-        
-        // Also handle custom customer toggle
-        if (customerId === 'Walk-in-Customer') {
-            $('#addCustomCustomer').html('<i class="las la-user-plus"></i> New Customer');
-            $('#customCustomerContainer').hide();
-            $('#customCustomerName').val('');
-            $('#customCustomerPhone').val('');
-            resetPaymentReferenceField();
-        }
-    });
-
-    // Handle custom customer toggle
-    $('#addCustomCustomer').click(function() {
-        $('#customCustomerContainer').toggle();
-        if ($('#customCustomerContainer').is(':visible')) {
-            $(this).html('<i class="las la-user-minus"></i> Cancel');
-            // Set to Walk-in Customer and reset reference field
-            $('#customerSelect').val('Walk-in-Customer').trigger('change');
-            resetPaymentReferenceField();
-        } else {
-            $(this).html('<i class="las la-user-plus"></i> New Customer');
-            $('#customCustomerName').val('');
-            $('#customCustomerPhone').val('');
-        }
-    });
-    // Initialize payment reference field on page load
-    $(document).ready(function() {
-        const initialCustomerId = $('#customerSelect').val();
-        console.log('Initial customer ID:', initialCustomerId);
-        loadCustomerReferences(initialCustomerId);
-    });
-
-    // Update form submission to handle payment reference
-    $(document).on('input', 'input[name="amount_paid"]', function() {
-        const amountPaid = parseFloat($(this).val()) || 0;
-        if (amountPaid > 0) {
-            // Show payment reference field importance
-            $('label[for="payment-reference-select"], label[for="payment-reference-input"]')
-                .html('Payment Reference / Location <span class="text-danger">*</span>');
-        } else {
-            $('label[for="payment-reference-select"], label[for="payment-reference-input"]')
-                .html('Payment Reference / Location');
-        }
     });
 
     // Handle form submission to ensure proper reference value
@@ -630,6 +569,20 @@
         console.log('Form submitting...');
         
         // Get the final payment reference value
+        if ($('#customCustomerContainer').is(':visible')) {
+            const customerName = $('#customCustomerName').val().trim();
+            if (!customerName) {
+                e.preventDefault();
+                alert('Please enter customer name for new customer');
+                $('#customCustomerName').focus();
+                return false;
+            }
+            
+            // Ensure customer_id is set to Walk-in-Customer for new customers
+            $('#customerSelect').val('Walk-in-Customer');
+        }
+        
+        // Handle payment reference
         let finalReference = '';
         
         // Check if we're using dropdown or input
@@ -659,11 +612,8 @@
         
         console.log('Final reference to submit:', finalReference);
         
-        // Handle custom customer
-        if ($('#customCustomerContainer').is(':visible') && $('#customCustomerName').val()) {
-            // Ensure customer_id is set to Walk-in-Customer
-            $('#customerSelect').val('Walk-in-Customer').prop('disabled', false);
-        }
+        return true;
+
         
         // Continue with form submission
         console.log('Form submitted with reference:', finalReference);
