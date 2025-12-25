@@ -56,7 +56,7 @@ class CustomerController extends Controller
         $sales = Sale::with(['items.product', 'items.variant'])
             ->where('customer_id', $customer->id)
             ->orderBy('created_at', 'desc')
-            ->take(10)
+            // ->take(10)
             ->get();
 
         // Calculate total spent

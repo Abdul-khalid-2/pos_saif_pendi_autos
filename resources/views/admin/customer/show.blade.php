@@ -170,23 +170,63 @@
                                                     </div>
                                                 </div>
                                             @endforeach
+                                            
+                                            <!-- Add option for ALL references -->
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card border-primary">
+                                                    <div class="card-body">
+                                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                                            <div>
+                                                                <i class="fas fa-list-alt text-primary mr-2"></i>
+                                                                <span class="font-weight-bold">All References</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Date Range Form for ALL references -->
+                                                        <form action="{{ route('customers.reference.invoice', ['customer' => $customer->id, 'reference' => 'all']) }}"
+                                                            method="GET" class="reference-invoice-form">
+                                                            <div class="row">
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group">
+                                                                        <label class="small">Start Date</label>
+                                                                        <input type="date" name="start_date" class="form-control form-control-sm"
+                                                                            value="{{ date('Y-m-01') }}" max="{{ date('Y-m-d') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <div class="form-group">
+                                                                        <label class="small">End Date</label>
+                                                                        <input type="date" name="end_date" class="form-control form-control-sm"
+                                                                            value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 d-flex align-items-end">
+                                                                    <button type="submit" class="btn btn-sm btn-primary btn-block">
+                                                                        <i class="fas fa-file-invoice"></i> Generate All
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endif
                         <div class="row mt-4">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header bg-primary text-white d-flex justify-content-between">
+                            <div class="col-lg-12">
+                                <div>
+                                    <div class="card-header mb-3 bg-primary text-white d-flex justify-content-between">
                                         <h5 class="mb-0">Recent Orders</h5>
                                     </div>
-                                    <div class="card-body">
+                                    <div >
                                         @if($sales->count() > 0)
-                                            <div class="table-responsive">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
+                                            <div class="table-responsive rounded mb-3">
+                                                <table class="data-tables table mb-0 tbl-server-info">
+                                                    <thead class="bg-white text-uppercase">
+                                                        <tr class="ligth ligth-data">
                                                             <th>Invoice #</th>
                                                             <th>Date</th>
                                                             <th>Items</th>
@@ -195,7 +235,7 @@
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody class="ligth-body">
                                                         @foreach($sales as $sale)
                                                             <tr>
                                                                 <td>{{ $sale->invoice_number }}</td>
@@ -203,8 +243,8 @@
                                                                 <td>{{ $sale->items->count() }}</td>
                                                                 <td>{{ number_format($sale->total_amount, 2) }}</td>
                                                                 <td>
-                                                                    <span class="badge bg-{{ $sale->status == 'completed' ? 'success' : ($sale->status == 'pending' ? 'warning' : 'danger') }}">
-                                                                        {{ ucfirst($sale->status) }}
+                                                                    <span class="badge bg-{{ $sale->payment_status == 'paid' ? 'success' : ($sale->payment_status == 'partial' ? 'warning' : 'danger') }}">
+                                                                        {{ ucfirst($sale->payment_status) }}
                                                                     </span>
                                                                 </td>
                                                                 <td>
