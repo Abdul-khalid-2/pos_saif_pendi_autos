@@ -178,7 +178,7 @@
                             </div>
                             @if($outOfStockVariants->hasPages())
                                 <div class="mt-3">
-                                    {{ $outOfStockVariants->links() }}
+                                    {{ $outOfStockVariants->links('pagination::bootstrap-5') }}
                                 </div>
                             @endif
                         @endif
@@ -222,10 +222,19 @@
                                     <tbody>
                                         @foreach($lowStockVariants as $variant)
                                         @php
-                                            $deficit = ($variant->product->reorder_level ?? 5) - $variant->current_stock;
-                                            $percentage = min(100, ($variant->current_stock / ($variant->product->reorder_level ?? 5)) * 100);
-                                            $statusColor = $percentage < 25 ? 'danger' : ($percentage < 50 ? 'warning' : 'info');
+                                            $reorderLevel = (int) ($variant->product->reorder_level ?? 0);
+
+                                            if ($reorderLevel <= 0) {
+                                                $percentage = 100;
+                                                $deficit = 0;
+                                                $statusColor = 'secondary';
+                                            } else {
+                                                $deficit = $reorderLevel - $variant->current_stock;
+                                                $percentage = min(100, ($variant->current_stock / $reorderLevel) * 100);
+                                                $statusColor = $percentage < 25 ? 'danger' : ($percentage < 50 ? 'warning' : 'info');
+                                            }
                                         @endphp
+
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
@@ -318,7 +327,7 @@
                             </div>
                             @if($lowStockVariants->hasPages())
                                 <div class="mt-3">
-                                    {{ $lowStockVariants->links() }}
+                                    {{ $lowStockVariants->links('pagination::bootstrap-5') }}
                                 </div>
                             @endif
                         @endif
