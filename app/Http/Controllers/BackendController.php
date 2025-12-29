@@ -84,7 +84,7 @@ class BackendController extends Controller
                     'total_sold' => $items->sum('quantity'),
                     'total_revenue' => $items->sum('total_price'),
                     'image' => $product->image_paths
-                        ? asset('storage/' . json_decode($product->image_paths, true)[0])
+                        ? asset('backend/' . json_decode($product->image_paths, true)[0])
                         : asset('backend/assets/images/product/04.png')
                 ];
             })
@@ -145,7 +145,7 @@ class BackendController extends Controller
                     'total_sold' => $items->sum('quantity'),
                     'total_revenue' => $items->sum('total_price'),
                     'image' => $product->image_paths
-                        ? asset('storage/' . json_decode($product->image_paths, true)[0])
+                        ? asset('backend/' . json_decode($product->image_paths, true)[0])
                         : asset('backend/assets/images/product/04.png')
                 ];
             })
@@ -280,7 +280,7 @@ class BackendController extends Controller
                     'total_sold' => $items->sum('quantity'),
                     'total_revenue' => $items->sum('total_price'),
                     'image' => $product->image_paths
-                        ? asset('storage/' . json_decode($product->image_paths, true)[0])
+                        ? asset('backend/' . json_decode($product->image_paths, true)[0])
                         : asset('backend/assets/images/product/04.png')
                 ];
             })

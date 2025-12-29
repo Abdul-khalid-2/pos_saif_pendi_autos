@@ -177,10 +177,10 @@ Route::group([
         Route::resource('categories', CategoryController::class);
 
         // Products
-        Route::resource('products', ProductController::class);
         Route::post('products/upload-image', [ProductController::class, 'uploadImage'])->name('products.upload-image');
         Route::delete('products/remove-image', [ProductController::class, 'removeImage'])->name('products.remove-image');
         Route::get('products/{product}/inventory', [ProductController::class, 'inventory'])->name('products.inventory');
+        Route::resource('products', ProductController::class);
 
         // Product Variants
         Route::get('products-variants/{product}', [ProductVariantController::class, 'index'])->name('product-variants.index');

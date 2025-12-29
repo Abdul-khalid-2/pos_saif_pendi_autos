@@ -52,7 +52,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @if($product->image_paths)
+                                        @if($product->image_paths && !empty(json_decode($product->image_paths)))
                                             @php
                                                 $images = json_decode($product->image_paths);
                                                 $firstImage = $images[0] ?? null;

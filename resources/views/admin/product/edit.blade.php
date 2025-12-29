@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/vendor/remixicon/fonts/remixicon.css')}}">
-    <link rel="stylesheet" href="{{ asset('backend/assets/vendor/dropzone/dist/dropzone.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css"/>
     @endpush
 
     <div class="container-fluid">
@@ -14,13 +14,13 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">{{ isset($product) ? 'Edit' : 'Add' }} Product</h4>
+                            <h4 class="card-title">Edit Product</h4>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="{{ isset($product) ? route('products.update', $product->id) : route('products.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            @if(isset($product)) @method('PUT') @endif
+                            @method('PUT')
                             
                             <div class="row">
                                 <div class="col-md-6">
@@ -135,12 +135,12 @@
                                     <div class="form-group">
                                         <label>Product Images</label>
                                         <div class="dropzone" id="productImagesDropzone"></div>
-                                        <input type="hidden" name="image_paths" id="imagePaths" value="{{ old('image_paths', $product->image_paths ?? '') }}">
+                                        <input type="hidden" name="image_paths" id="imagePaths" value="{{ old('image_paths', $product->image_paths ?? '[]') }}">
                                         @error('image_paths') <div class="text-danger">{{ $message }}</div> @enderror
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary mr-2">Save Product</button>
+                            <button type="submit" class="btn btn-primary mr-2">Update Product</button>
                             <a href="{{ route('products.index') }}" class="btn btn-danger">Cancel</a>
                         </form>
                     </div>
@@ -167,7 +167,7 @@
     <script src="{{ asset('backend/assets/js/app.js') }}"></script>
     
     <!-- Dropzone JavaScript -->
-    <script src="{{ asset('backend/assets/vendor/dropzone/dist/dropzone.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
     
     <script>
         // Initialize Dropzone for image uploads
@@ -176,33 +176,75 @@
         $(document).ready(function() {
             let uploadedImages = [];
             
+            // Parse existing images safely
+            @if(isset($product) && $product->image_paths)
+                try {
+                    uploadedImages = JSON.parse(@json($product->image_paths));
+                } catch(e) {
+                    console.error('Error parsing image paths:', e);
+                    uploadedImages = [];
+                }
+            @endif
+            
             // Initialize dropzone
             let myDropzone = new Dropzone("#productImagesDropzone", {
                 url: "{{ route('products.upload-image') }}",
                 paramName: "image",
                 maxFilesize: 2, // MB
+                maxFiles: 10, // Limit number of files
                 acceptedFiles: "image/*",
                 addRemoveLinks: true,
+                dictRemoveFile: "Remove",
+                dictCancelUpload: "Cancel",
+                dictDefaultMessage: "Drop files here or click to upload",
+                dictFileTooBig: "File is too big .",
                 headers: {
                     'X-CSRF-TOKEN': "{{ csrf_token() }}"
                 },
                 success: function(file, response) {
-                    uploadedImages.push(response.path);
-                    $('#imagePaths').val(JSON.stringify(uploadedImages));
+                    console.log('Upload success:', response);
+                    if (response.path) {
+                        uploadedImages.push(response.path);
+                        $('#imagePaths').val(JSON.stringify(uploadedImages));
+                        file.name = response.path; // Store path in file name
+                    }
+                },
+                error: function(file, response) {
+                    console.error('Upload error:', response);
+                    if (typeof response === 'string') {
+                        try {
+                            response = JSON.parse(response);
+                        } catch(e) {
+                            console.error('Parse error:', e);
+                        }
+                    }
+                    let message = response.message || response.error || 'Upload failed';
+                    file.previewElement.classList.add("dz-error");
+                    $(file.previewElement).find('.dz-error-message').text(message);
                 },
                 removedfile: function(file) {
+                    let path = file.name;
+                    
+                    console.log('Removing file:', path);
+                    
                     // Remove from server
                     $.ajax({
                         url: "{{ route('products.remove-image') }}",
                         type: 'DELETE',
                         data: {
-                            path: file.name,
+                            path: path,
                             _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            console.log('Remove success:', response);
+                        },
+                        error: function(xhr) {
+                            console.error('Remove error:', xhr.responseText);
                         }
                     });
                     
                     // Remove from local array
-                    const index = uploadedImages.indexOf(file.name);
+                    const index = uploadedImages.indexOf(path);
                     if (index !== -1) {
                         uploadedImages.splice(index, 1);
                         $('#imagePaths').val(JSON.stringify(uploadedImages));
@@ -214,16 +256,36 @@
                 init: function() {
                     // Load existing images if editing
                     @if(isset($product) && $product->image_paths)
-                        let existingImages = JSON.parse('{!! $product->image_paths !!}');
-                        existingImages.forEach(function(image) {
-                            let mockFile = { name: image, size: 12345 };
-                            this.emit("addedfile", mockFile);
-                            this.emit("thumbnail", mockFile, "{{ asset('storage') }}/" + image);
-                            this.emit("complete", mockFile);
-                            uploadedImages.push(image);
-                        }.bind(this));
-                        $('#imagePaths').val(JSON.stringify(uploadedImages));
+                        try {
+                            let existingImages = JSON.parse(@json($product->image_paths));
+                            console.log('Loading existing images:', existingImages);
+                            
+                            if (Array.isArray(existingImages)) {
+                                existingImages.forEach(function(image) {
+                                    if (image) {
+                                        console.log('Adding image:', image);
+                                        let mockFile = { 
+                                            name: image, 
+                                            size: 12345,
+                                            accepted: true
+                                        };
+                                        
+                                        this.emit("addedfile", mockFile);
+                                        // Use proper URL for thumbnail
+                                        let imageUrl = "{{ asset('backend') }}/" + image;
+                                        console.log('Thumbnail URL:', imageUrl);
+                                        this.emit("thumbnail", mockFile, imageUrl);
+                                        this.emit("complete", mockFile);
+                                    }
+                                }.bind(this));
+                            }
+                        } catch(e) {
+                            console.error('Error loading existing images:', e);
+                        }
                     @endif
+                    
+                    // Set initial value for hidden input
+                    $('#imagePaths').val(JSON.stringify(uploadedImages));
                 }
             });
         });
