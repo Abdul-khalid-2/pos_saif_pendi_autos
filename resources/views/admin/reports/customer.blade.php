@@ -28,9 +28,9 @@
                         <a href="#" class="btn btn-secondary" onclick="window.print()">
                             <i class="fas fa-print mr-2"></i>Print
                         </a>
-                        <a href="{{ route('reports.customer.export', request()->all()) }}" class="btn btn-success ml-2">
+                        <!-- <a href="{{ route('reports.customer.export', request()->all()) }}" class="btn btn-success ml-2">
                             <i class="fas fa-file-excel mr-2"></i>Export
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>
