@@ -13,8 +13,9 @@ class InventoryLogController extends Controller
     public function index()
     {
         $logs = InventoryLog::with(['product', 'variant', 'branch', 'user'])
-            ->latest()
-            ->paginate(20);
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->sortByDesc('created_at');
 
         return view('admin.inventory.index', compact('logs'));
     }
