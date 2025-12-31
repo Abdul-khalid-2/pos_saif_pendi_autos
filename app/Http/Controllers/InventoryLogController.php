@@ -34,7 +34,8 @@ class InventoryLogController extends Controller
             'product_id' => 'required|exists:products,id',
             'variant_id' => 'required|exists:product_variants,id',
             'branch_id' => 'required|exists:branches,id',
-            'quantity_change' => 'required|integer',
+            'quantity_change' => 'required|integer|min:1',
+            'quantity_change_type' => 'required|in:add,remove',
             'reference_type' => 'required|string|max:50',
             'reference_id' => 'nullable|integer',
             'notes' => 'nullable|string',
@@ -42,7 +43,22 @@ class InventoryLogController extends Controller
 
         // Get current stock
         $variant = ProductVariant::findOrFail($validated['variant_id']);
-        $newQuantity = $variant->current_stock + $validated['quantity_change'];
+
+        // Calculate the actual quantity change based on type
+        $quantityChange = $validated['quantity_change'];
+        if ($validated['quantity_change_type'] === 'remove') {
+            // Convert to negative for removal
+            $quantityChange = -$quantityChange;
+        }
+
+        // Check if removing more than available stock
+        if ($quantityChange < 0 && abs($quantityChange) > $variant->current_stock) {
+            return redirect()->back()
+                ->with('error', 'Cannot remove more stock than available. Current stock: ' . $variant->current_stock)
+                ->withInput();
+        }
+
+        $newQuantity = $variant->current_stock + $quantityChange;
 
         // Create log
         $log = InventoryLog::create([
@@ -50,7 +66,7 @@ class InventoryLogController extends Controller
             'product_id' => $validated['product_id'],
             'variant_id' => $validated['variant_id'],
             'branch_id' => $validated['branch_id'],
-            'quantity_change' => $validated['quantity_change'],
+            'quantity_change' => $quantityChange,
             'new_quantity' => $newQuantity,
             'reference_type' => $validated['reference_type'],
             'reference_id' => $validated['reference_id'],
