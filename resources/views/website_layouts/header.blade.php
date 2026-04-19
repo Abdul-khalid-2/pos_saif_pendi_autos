@@ -4,7 +4,7 @@
                 <!-- Logo -->
                 <a href="{{ LaravelLocalization::getLocalizedURL(app()->getLocale(), route('home.index', [], false)) }}">
                     <div class="flex-shrink-0 flex items-center">
-                        {{-- <img class="h-6 w-auto" src="{{ asset('backend/assets/images/MDLogo.jpg') }}" alt="MD Autos Logo">&nbsp;&nbsp;  --}}
+                        {{-- <img class="h-6 w-auto" src="{{ asset('backend/assets/images/MDLogo.jpg') }}" alt="Pak Pindi Autos Logo">&nbsp;&nbsp;  --}}
                         <span class="text-2xl font-semibold text-sky-500"> PAK PINDI</span>
                     </div>
                 </a>

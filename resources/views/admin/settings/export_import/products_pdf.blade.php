@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Products Export - Md Autos</title>
+    <title>Products Export - Pak Pindi Autos</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 12px; }
         .page { page-break-after: always; }
@@ -30,7 +30,7 @@
     @foreach($products as $product)
     <div class="page">
         <div class="header">
-            <h1>Md Autos</h1>
+            <h1>Pak Pindi Autos</h1>
             <p>Product Details - {{ date('Y-m-d H:i:s') }}</p>
         </div>
         

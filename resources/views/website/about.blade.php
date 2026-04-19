@@ -6,7 +6,7 @@
 <section id="about" class="py-16 bg-gray-50 dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-3 dark:text-white">About <span class="text-gradient">MD Autos</span></h2>
+            <h2 class="text-3xl font-bold mb-3 dark:text-white">About <span class="text-gradient">Pak Pindi Autos</span></h2>
             <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                 Your trusted partner for heavy vehicle parts since 2005
             </p>
@@ -16,7 +16,7 @@
             <div>
                 <h3 class="text-2xl font-bold mb-4 dark:text-white">Our Story</h3>
                 <p class="text-gray-600 dark:text-gray-300 mb-4">
-                    Founded in 2005, MD Autos has grown from a small local supplier to one of the leading providers 
+                    Founded in 2005, Pak Pindi Autos has grown from a small local supplier to one of the leading providers 
                     of heavy vehicle parts in the region. Our commitment to quality and customer satisfaction has 
                     been the driving force behind our success.
                 </p>
@@ -135,7 +135,7 @@
                     <i class="fas fa-star"></i>
                 </div>
                 <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
-                    "I've been purchasing parts from MD Autos for years. Their quality and service are unmatched in the industry. 
+                    "I've been purchasing parts from Pak Pindi Autos for years. Their quality and service are unmatched in the industry. 
                     The parts last longer and their technical support is exceptional."
                 </p>
                 <div class="flex items-center">
@@ -162,7 +162,7 @@
                 </div>
                 <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
                     "Their parts last longer than competitors' and the prices are reasonable. Delivery is always on time. 
-                    MD Autos has been our go-to supplier for all our fleet maintenance needs."
+                    Pak Pindi Autos has been our go-to supplier for all our fleet maintenance needs."
                 </p>
                 <div class="flex items-center">
                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" 
@@ -187,7 +187,7 @@
                     <i class="fas fa-star-half-alt"></i>
                 </div>
                 <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
-                    "Whenever I need parts for my trucks, MD Autos is my first choice. Their technical support is excellent 
+                    "Whenever I need parts for my trucks, Pak Pindi Autos is my first choice. Their technical support is excellent 
                     and they always have what I need in stock. Highly recommended!"
                 </p>
                 <div class="flex items-center">
