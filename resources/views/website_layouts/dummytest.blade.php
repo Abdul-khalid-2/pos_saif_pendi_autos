@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MD Autos | Heavy Vehicle Parts Supplier</title>
+    <title>Pak Pindi Autos | Heavy Vehicle Parts Supplier</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -307,7 +307,7 @@ welcome.blade.php
                         <i class="fas fa-quote-left text-2xl opacity-50"></i>
                     </div>
                     <p class="text-gray-600 mb-6">
-                        "I've been purchasing parts from MD Autos for years. Their quality and service are unmatched in the industry."
+                        "I've been purchasing parts from Pak Pindi Autos for years. Their quality and service are unmatched in the industry."
                     </p>
                     <div class="flex items-center">
                         <div class="ml-4">
@@ -339,7 +339,7 @@ welcome.blade.php
                         <i class="fas fa-quote-left text-2xl opacity-50"></i>
                     </div>
                     <p class="text-gray-600 mb-6">
-                        "Whenever I need parts for my trucks, MD Autos is my first choice. Their technical support is excellent."
+                        "Whenever I need parts for my trucks, Pak Pindi Autos is my first choice. Their technical support is excellent."
                     </p>
                     <div class="flex items-center">
                         <div class="ml-4">

@@ -49,7 +49,7 @@
         <!-- Content -->
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">MD AUTOS</h1>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">Pak Pindi Autos</h1>
                 <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
                     Your trusted supplier of genuine heavy vehicle parts and components
                 </p>
@@ -76,12 +76,12 @@
             <div class="flex flex-col md:flex-row items-center gap-12">
                 <div class="md:w-1/2">
                     <img src="{{ asset('backend/assets/images/Engine_Components.jpg') }}"
-                        alt="About MD Autos" class="rounded-xl shadow-md w-full">
+                        alt="About Pak Pindi Autos" class="rounded-xl shadow-md w-full">
                 </div>
                 <div class="md:w-1/2">
-                    <h2 class="text-3xl font-bold mb-6">About <span class="text-gradient">MD Autos</span></h2>
+                    <h2 class="text-3xl font-bold mb-6">About <span class="text-gradient">Pak Pindi Autos</span></h2>
                     <p class="text-gray-600 mb-4">
-                        MD Autos is a leading supplier of heavy vehicle parts with decades of experience in the automotive industry. Our mission is to provide our customers with the highest quality parts at competitive prices.
+                        Pak Pindi Autos is a leading supplier of heavy vehicle parts with decades of experience in the automotive industry. Our mission is to provide our customers with the highest quality parts at competitive prices.
                     </p>
                     <p class="text-gray-600 mb-6">
                         Our team of experienced professionals will help you find the right parts for your specific needs. We source parts only from authorized and trusted manufacturers to ensure you receive the best products available.
